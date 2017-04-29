@@ -19,7 +19,7 @@ void state_cb(const mavros_msgs::State::ConstPtr& msg){
 
 int main(int argc, char **argv)
 {
-    ros::init(argc, argv, "offb_node");
+    ros::init(argc, argv, "offboardtesting_node");
     std::cout << "Running the simulation" << std::endl;
     ros::NodeHandle nh;
 
