@@ -23,20 +23,21 @@ int main(int argc, char const **argv) {
   ros::Rate loop_rate(10);
   // Get the Aruco detector
   Aruco::Aruco arucoDetection = new Aruco::Aruco(1);
+  auto poses = new std::vector<std::vector<double>>();
   while(ros::ok())
   {
     // publish the results
     auto markerIds = arucoDetection->arucoMarkersInView();
-    auto poses = new std::vector<std::vector<double>>();
+
     for(auto &elem : markerIds) {
       poses.push_back(arucoDetection->getPose(elem));
     }
     // publish the data here
+    poses.clear();
     ros::spinOnce();
     loop_rate.sleep();
   }
 
-
-
+  delete poses;
   return 0;
 }
