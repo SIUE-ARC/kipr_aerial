@@ -62,6 +62,7 @@ private:
 
   const std::string WHITE_CAMERA_FILE = "white_2016.yml";
   const std::string BLACK_CAMERA_FILE = "black_2017.yml";
+  const std::string PI_CAMERA_FILE = "pi_camera.yml";
 
   cv::Mat getFrame();
   bool openCamera();

@@ -12,7 +12,6 @@
  *
  */
 aruco::Aruco::Aruco(int dictionaryId) {
-  this->dictionaryId = dictionaryId;
   // if dictioniary ID < 0 use custom dictionary file
   this->dictionaryId = dictionaryId;
   if (dictionaryId < 0) {
@@ -24,9 +23,9 @@ aruco::Aruco::Aruco(int dictionaryId) {
   this->detectorParams = cv::aruco::DetectorParameters::create();
   this->detectorParams->doCornerRefinement = true;
   // sets WHITE_2016 custom configuration as default
-  std::string fname = this->calibrationFilePath + this->WHITE_CAMERA_FILE;
+  std::string fname = this->calibrationFilePath + this->PI_CAMERA_FILE;
   if (access(fname.c_str(), F_OK) != -1) {
-    this->currentCalibrationFile = this->WHITE_CAMERA_FILE;
+    this->currentCalibrationFile = this->PI_CAMERA_FILE;
     // Now get distortion calibration data
     this->readCameraCalibration(this->currentCalibrationFile);
   }
