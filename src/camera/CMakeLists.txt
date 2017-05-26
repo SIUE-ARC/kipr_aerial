@@ -12,6 +12,8 @@ find_package(catkin REQUIRED COMPONENTS
   rospy
   std_msgs
 )
+
+find_package( OpenCV REQUIRED )
 ###################################
 ## catkin specific configuration ##
 ###################################
@@ -39,5 +41,8 @@ include_directories(
   ${catkin_INCLUDE_DIRS}
 )
 
-add_executable(camera_aruco src/camera_aruco.cpp)
-target_link_libraries(camera_aruco ${catkin_LIBRARIES})
+set(project_sources src/camera_aruco.cpp)
+add_library(MyAruco src/aruco.cpp)
+target_link_libraries(MyAruco ${OpenCV_LIBS} )
+add_executable(camera_aruco ${project_sources})
+target_link_libraries(camera_aruco MyAruco ${catkin_LIBRARIES})

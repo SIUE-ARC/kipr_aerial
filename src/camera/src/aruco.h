@@ -7,7 +7,6 @@
 #ifndef INCLUDE_WALLABY_ARUCO_HPP_
 #define INCLUDE_WALLABY_ARUCO_HPP_
 
-
 #include <algorithm>
 #include <fstream>
 #include <iostream>
@@ -19,16 +18,10 @@
 #include <string>
 #include <unistd.h>
 
-namespace aruco {
-class Aruco;
-static Aruco *instance;
-const static int defaultDictionaryID = 1; // TODO default dictionary
-
 class Aruco {
 public:
   Aruco(int dicionaryId);
   ~Aruco();
-  static Aruco *getInstance();
   bool arucoMarkerInView(int arucoId, cv::Mat *frame = nullptr);
   bool setDictionary(int dictionaryId);
   std::vector<int> arucoMarkersInView(cv::Mat *frame = nullptr);
@@ -41,6 +34,7 @@ public:
   bool setCameraCalibration(std::string filename);
 
 private:
+  bool flipVertical = false;
   float chessBoardSquareSize = 0.0235f; // Meters // TODO pass in this value?
   float arucoSquareSize = 0.025f;       // Meters // TODO pass in this value?
   int numImagesForCalibration = 15;     // TODO appropriate value?
@@ -74,5 +68,5 @@ private:
   void calculateChessBoardCornersFromImages(
       std::vector<std::vector<cv::Point2f>> &foundCorners);
 };
-}
+
 #endif
