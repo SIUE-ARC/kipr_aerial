@@ -22,6 +22,7 @@ class Aruco {
 public:
   Aruco(int dicionaryId);
   ~Aruco();
+  bool openCamera();
   bool arucoMarkerInView(int arucoId, cv::Mat *frame = nullptr);
   bool setDictionary(int dictionaryId);
   std::vector<int> arucoMarkersInView(cv::Mat *frame = nullptr);
@@ -58,7 +59,6 @@ private:
   const std::string BLACK_CAMERA_FILE = "black_2017.yml";
 
   cv::Mat getFrame();
-  bool openCamera();
   bool saveCalibration();
   void getImagesFromCamera();
   bool getCustomDictionary();

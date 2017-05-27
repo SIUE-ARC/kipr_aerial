@@ -24,14 +24,6 @@ Aruco::Aruco(int dictionaryId) {
   }
   this->detectorParams = cv::aruco::DetectorParameters::create();
   this->detectorParams->doCornerRefinement = true;
-  // sets WHITE_2016 custom configuration as default
-  std::string fname = this->calibrationFilePath + this->WHITE_CAMERA_FILE;
-  if (access(fname.c_str(), F_OK) != -1) {
-    this->currentCalibrationFile = this->WHITE_CAMERA_FILE;
-    // Now get distortion calibration data
-    this->readCameraCalibration(this->currentCalibrationFile);
-  }
-  this->openCamera();
 }
 
 /*
@@ -435,7 +427,9 @@ void Aruco::setArucoMarkerSize(float sizeInMeters) {
  *
  */
 bool Aruco::openCamera() {
+  std::cout << "Opening Camera" << std::endl;
   if (this->camera.isOpened())
     return true;
-  return this->camera.open(-1);
+  // Camera 1 is the default
+  return this->camera.open(1);
 }
