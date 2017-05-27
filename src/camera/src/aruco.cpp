@@ -24,6 +24,10 @@ Aruco::Aruco(int dictionaryId) {
   }
   this->detectorParams = cv::aruco::DetectorParameters::create();
   this->detectorParams->doCornerRefinement = true;
+  if (!this->setCameraCalibration(
+          "/home/ryan/build/kipr_aerial/logitech.yml")) {
+    std::cout << "Could not Open the camera calibration file" << std::endl;
+  }
 }
 
 /*
@@ -42,11 +46,13 @@ Aruco::~Aruco() { this->camera.release(); }
  */
 cv::Mat Aruco::getFrame() {
   cv::Mat mt;
-  if (!this->camera.isOpened())
+  if (!this->camera.isOpened()) {
+    std::cout << "Camera is not opened, returning empty mat" << std::endl;
     return mt;
+  }
   this->camera >> mt;
-  if (this->flipVertical)
-    flip(mt, mt, 1);
+  // if (this->flipVertical)
+  //   flip(mt, mt, 1);
   return mt;
 }
 /*
@@ -70,8 +76,7 @@ bool Aruco::setCameraCalibration(std::string filename) {
  *
  */
 bool Aruco::readCameraCalibration(std::string filename) {
-  cv::FileStorage fs(this->calibrationFilePath + filename,
-                     cv::FileStorage::READ);
+  cv::FileStorage fs(filename, cv::FileStorage::READ);
   if (!fs.isOpened())
     return false;
   fs["camera_matrix"] >> this->cameraMatrix;
@@ -142,22 +147,16 @@ bool Aruco::vectorContains(std::vector<int> vec, int val) {
  */
 std::vector<double> Aruco::getPose(int arucoId, cv::Mat *frame) {
   std::vector<double> rottransvec;
-  rottransvec.assign(6, 0.0);
+
   // Camera Calibration Failed...No files?
   if ((cameraMatrix.empty() || cv::countNonZero(cameraMatrix) < 1) ||
       (distortionCoefficients.empty() ||
-       cv::countNonZero(distortionCoefficients) < 1))
+       cv::countNonZero(distortionCoefficients) < 1)) {
+    std::cout << "Could not get the pose, no callibration" << std::endl;
     return rottransvec;
-
-  cv::Mat img;
-  if (frame == nullptr) {
-    if (!this->camera.isOpened())
-      if (!this->openCamera())
-        return rottransvec;
-    img = this->getFrame();
-  } else {
-    img = *frame;
   }
+
+  cv::Mat img = this->getFrame();
 
   std::vector<int> ids;
   std::vector<std::vector<cv::Point2f>> corners, rejected;
@@ -172,8 +171,10 @@ std::vector<double> Aruco::getPose(int arucoId, cv::Mat *frame) {
                                          rvecs, tvecs);
 
     size_t index = find(ids.begin(), ids.end(), arucoId) - ids.begin();
+
     cv::Vec3d translation = tvecs[index];
     cv::Vec3d rotation = rvecs[index];
+    rottransvec.clear(); // Clear all of the zero
     for (size_t i = 0; i < translation.rows; i++) {
       rottransvec.push_back(translation[i]);
     }

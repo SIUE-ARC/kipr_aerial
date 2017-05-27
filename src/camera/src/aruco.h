@@ -37,7 +37,7 @@ public:
 private:
   bool flipVertical = false;
   float chessBoardSquareSize = 0.0235f; // Meters // TODO pass in this value?
-  float arucoSquareSize = 0.025f;       // Meters // TODO pass in this value?
+  float arucoSquareSize = 0.093f;       // Meters // TODO pass in this value?
   int numImagesForCalibration = 15;     // TODO appropriate value?
   cv::Size chessBoardDimensions = cv::Size(6, 9);
   std::vector<cv::Mat> images;
