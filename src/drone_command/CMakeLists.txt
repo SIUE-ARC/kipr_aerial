@@ -33,6 +33,7 @@ catkin_package(
 ## Build ##
 ###########
 
+
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
 # include_directories(include)
@@ -40,5 +41,6 @@ include_directories(
   ${catkin_INCLUDE_DIRS}
 )
 
+set(CMAKE_CXX_FLAGS "-std=c++0x ${CMAKE_CXX_FLAGS}")
 add_executable(offboard_testing src/offboard_testing.cpp)
 target_link_libraries(offboard_testing ${catkin_LIBRARIES})

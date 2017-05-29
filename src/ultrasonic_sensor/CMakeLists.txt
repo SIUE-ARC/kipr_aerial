@@ -39,5 +39,7 @@ include_directories(
   ${catkin_INCLUDE_DIRS}
 )
 
+set(CMAKE_CXX_FLAGS "-std=c++0x ${CMAKE_CXX_FLAGS}")
+
 add_executable(ultrasonic_sensor src/ultrasonic_sensor.cpp)
 target_link_libraries(ultrasonic_sensor ${catkin_LIBRARIES})
