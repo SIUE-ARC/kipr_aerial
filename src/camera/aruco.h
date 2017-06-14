@@ -29,6 +29,7 @@ public:
   std::vector<std::vector<cv::Point2f>>
   arucoMarkerCorners(cv::Mat *frame = nullptr);
   std::vector<double> getPose(int arucoId, cv::Mat *frame = nullptr);
+  cv::Mat getPoseAsMat(int arucoId, cv::Mat *frame = nullptr);
   void setChessBoardSize(float sizeInMeters);
   void setArucoMarkerSize(float sizeInMeters);
   bool calibrate(std::vector<cv::Mat> images);

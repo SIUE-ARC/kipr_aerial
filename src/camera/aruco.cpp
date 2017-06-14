@@ -25,7 +25,7 @@ Aruco::Aruco(int dictionaryId) {
   this->detectorParams = cv::aruco::DetectorParameters::create();
   this->detectorParams->doCornerRefinement = true;
   if (!this->setCameraCalibration(
-          "/home/ryan/build/kipr_aerial/logitech.yml")) {
+          "./logitech.yml")) {
     std::cout << "Could not Open the camera calibration file" << std::endl;
   }
 }
@@ -174,17 +174,63 @@ std::vector<double> Aruco::getPose(int arucoId, cv::Mat *frame) {
 
     cv::Vec3d translation = tvecs[index];
     cv::Vec3d rotation = rvecs[index];
-    rottransvec.clear(); // Clear all of the zero
-    for (size_t i = 0; i < translation.rows; i++) {
-      rottransvec.push_back(translation[i]);
-    }
-
-    for (size_t i = 0; i < rotation.rows; i++) {
-      rottransvec.push_back(rotation[i]);
-    }
   }
   return rottransvec;
 }
+
+/*
+ * Get Pose as Mat
+ *
+ * Get the X, Y, and Z Rotation and Translation vectors for a
+ * particular Aruco Marker in the View
+ *
+ * returns all zeros when not in View
+ * returns mat
+ *
+ */
+ cv::Mat Aruco::getPoseAsMat(int arucoId, cv::Mat *frame) {
+   cv::Mat R;
+
+   // Camera Calibration Failed...No files?
+   if ((cameraMatrix.empty() || cv::countNonZero(cameraMatrix) < 1) ||
+       (distortionCoefficients.empty() ||
+        cv::countNonZero(distortionCoefficients) < 1)) {
+     std::cout << "Could not get the pose, no callibration" << std::endl;
+     return R;
+   }
+
+   cv::Mat img = this->getFrame();
+
+   std::vector<int> ids;
+   std::vector<std::vector<cv::Point2f>> corners, rejected;
+   std::vector<cv::Vec3d> rvecs, tvecs;
+
+   // detect markers and estimate pose
+   cv::aruco::detectMarkers(img, this->dictionary, corners, ids, detectorParams,
+                            rejected);
+   if (ids.size() > 0 && this->vectorContains(ids, arucoId)) {
+     cv::aruco::estimatePoseSingleMarkers(corners, this->arucoSquareSize,
+                                          cameraMatrix, distortionCoefficients,
+                                          rvecs, tvecs);
+
+     size_t index = find(ids.begin(), ids.end(), arucoId) - ids.begin();
+
+     cv::Vec3d translation = tvecs[index];
+     cv::Vec3d rotation = rvecs[index];
+     cv::Mat t = cv::Mat(translation);
+     cv::Mat r = cv::Mat(rotation);
+     cv::Rodrigues(r, R);
+     t = -R.t() * t;
+     cv::Rodrigues(R, rotation);
+    cv::Mat row = cv::Mat(1, 4, CV_64F, 0.0);
+    row.at<double>(0, 3) = 1;
+    cv::hconcat(R, t, R);
+//    cv::vconcat(R, cv::Mat(b).t(), R);
+//      std::cout << cv::Mat(b) << std::endl;
+    R.push_back(row);
+   }
+   return R;
+ }
 
 /*
  * Markers in View
@@ -432,5 +478,5 @@ bool Aruco::openCamera() {
   if (this->camera.isOpened())
     return true;
   // Camera 1 is the default
-  return this->camera.open(1);
+  return this->camera.open(0);
 }
