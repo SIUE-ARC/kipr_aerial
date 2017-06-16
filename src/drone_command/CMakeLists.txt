@@ -43,4 +43,6 @@ include_directories(
 
 set(CMAKE_CXX_FLAGS "-std=c++0x ${CMAKE_CXX_FLAGS}")
 add_executable(offboard_testing src/offboard_testing.cpp)
+add_executable(drone_command src/command.cpp)
 target_link_libraries(offboard_testing ${catkin_LIBRARIES})
+target_link_libraries(drone_command ${catkin_LIBRARIES})

@@ -166,6 +166,7 @@ std::vector<double> Aruco::getPose(int arucoId, cv::Mat *frame) {
   cv::aruco::detectMarkers(img, this->dictionary, corners, ids, detectorParams,
                            rejected);
   if (ids.size() > 0 && this->vectorContains(ids, arucoId)) {
+    std::cout << "Estimating the pose " << std::endl;
     cv::aruco::estimatePoseSingleMarkers(corners, this->arucoSquareSize,
                                          cameraMatrix, distortionCoefficients,
                                          rvecs, tvecs);
@@ -174,6 +175,18 @@ std::vector<double> Aruco::getPose(int arucoId, cv::Mat *frame) {
 
     cv::Vec3d translation = tvecs[index];
     cv::Vec3d rotation = rvecs[index];
+
+    rottransvec.clear(); // Clear all of the zero
+    for (size_t i = 0; i < translation.rows; i++) {
+      rottransvec.push_back(translation[i]);
+    }
+
+    for (size_t i = 0; i < rotation.rows; i++) {
+      rottransvec.push_back(rotation[i]);
+    }
+  }else
+  {
+    std::cout << "Not estimating the pose" << std::endl;
   }
   return rottransvec;
 }
@@ -189,7 +202,7 @@ std::vector<double> Aruco::getPose(int arucoId, cv::Mat *frame) {
  *
  */
  cv::Mat Aruco::getPoseAsMat(int arucoId, cv::Mat *frame) {
-   cv::Mat R;
+   cv::Mat R = cv::Mat(4, 4, CV_64F, 0.0);
 
    // Camera Calibration Failed...No files?
    if ((cameraMatrix.empty() || cv::countNonZero(cameraMatrix) < 1) ||
@@ -215,18 +228,18 @@ std::vector<double> Aruco::getPose(int arucoId, cv::Mat *frame) {
 
      size_t index = find(ids.begin(), ids.end(), arucoId) - ids.begin();
 
-     cv::Vec3d translation = tvecs[index];
-     cv::Vec3d rotation = rvecs[index];
-     cv::Mat t = cv::Mat(translation);
-     cv::Mat r = cv::Mat(rotation);
-     cv::Rodrigues(r, R);
-     t = -R.t() * t;
-     cv::Rodrigues(R, rotation);
+    //  cv::Vec3d translation = tvecs[index];
+    //  cv::Vec3d rotation = rvecs[index];
+    //  cv::Mat t = cv::Mat(translation);
+    //  cv::Mat r = cv::Mat(rotation);
+    //  cv::Rodrigues(r, R);
+    //  t = -R.t() * t;
+    //  cv::Rodrigues(R, rotation);
+    cv::Rodrigues(rvecs[index], R);
+    cv::Mat transpose = -R.t() * (cv::Mat)tvecs[index];
     cv::Mat row = cv::Mat(1, 4, CV_64F, 0.0);
     row.at<double>(0, 3) = 1;
-    cv::hconcat(R, t, R);
-//    cv::vconcat(R, cv::Mat(b).t(), R);
-//      std::cout << cv::Mat(b) << std::endl;
+    cv::hconcat(R, transpose, R);
     R.push_back(row);
    }
    return R;

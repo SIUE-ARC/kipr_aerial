@@ -35,10 +35,18 @@ int main(int argc, char **argv) {
   while (ros::ok()) {
     std::vector<int> markers = arucoDetector->arucoMarkersInView();
     for (auto &marker : markers) {
+      std::cout << "Marker " << std::to_string(marker) << std::endl;
       std::vector<double> directPose = arucoDetector->getPose(marker);
+      std::cout << "Vector Size " << directPose.size() << std::endl;
+      std::cout << "Direct Pose Vector " << std::endl;
+      for (auto &item : directPose) {
+        std::cout << item << " ";
+      }
+      std::cout << std::endl;
       if (directPose.size() >= 6) {
+        std::cout << "Publising Marker " << std::to_string(marker) << std::endl;
         transformStamped.header.stamp = ros::Time::now();
-        transformStamped.header.frame_id = "world";
+        transformStamped.header.frame_id = "camera";
         transformStamped.child_frame_id = std::to_string(marker);
         transformStamped.transform.translation.x = directPose[0];
         transformStamped.transform.translation.y = directPose[1];
