@@ -3,3 +3,5 @@ devel/
 src/*/include/
 *.o
 *.gch
+*.urdf
+

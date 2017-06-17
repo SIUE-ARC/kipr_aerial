@@ -1,6 +1,6 @@
-<?xml version="1.0" ?>
+<?xml version="1.0"?>
 
-<robot name="drone">
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="drone">
   <link name="base_link">
     <visual>
     <geometry>
