@@ -48,6 +48,15 @@
         </visual>
     </link>
 
+    <link name="camera">
+        <visual>
+            <origin xyz="0 0 0"/>
+            <geometry>
+                <box size="0.001 0.025 0.025"/>
+            </geometry>
+        </visual>
+    </link>
+
     <xacro:prop_arm name="front_left"/>
     <xacro:prop_arm name="front_right"/>
     <xacro:prop_arm name="back_left"/>
@@ -75,6 +84,14 @@
         <parent link="base_link"/>
         <child link="back_right_arm"/>
         <origin xyz="${-BODY_LENGTH/2} ${-BODY_WIDTH/2} 0" rpy="0 0 ${pi}"/>
+    </joint>
+
+    <joint name="camera_body_joint" type="fixed">
+        <parent link="base_link"/>
+        <child link="camera"/>
+        <origin xyz="0 0 0" rpy="0 ${pi/2} 0"/>
+    </joint>
+
     </joint>
 </robot>
 
