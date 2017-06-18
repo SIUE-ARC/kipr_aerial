@@ -1,0 +1,97 @@
+<?xml version="1.0"?>
+
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="drone">
+
+    <xacro:property name="ARM_MOTOR_LENGTH" value="0.070" />
+    <xacro:property name="ARM_LENGTH" value="0.080" />
+    <xacro:property name="ARM_WIDTH" value="0.025" />
+    <xacro:property name="ARM_THICKNESS" value="0.003" />
+
+    <xacro:property name="PROP_LENGTH" value="0.152" />
+    <xacro:property name="PROP_THICKNESS" value="0.005" />
+
+    <xacro:property name="BODY_WIDTH" value="0.059" />
+    <xacro:property name="BODY_LENGTH" value="0.158" />
+    <xacro:property name="BODY_HEIGHT" value="0.010" />
+
+    <xacro:macro name="prop_arm" params="name">
+        <link name="${name}_arm">
+            <visual>
+                <origin xyz="0 ${-ARM_LENGTH/2} 0"/>
+                <geometry>
+                    <box size="${ARM_WIDTH} ${ARM_LENGTH} ${ARM_THICKNESS}"/>
+                </geometry>
+            </visual>
+        </link>
+
+        <link name="${name}_prop">
+            <visual>
+                <geometry>
+                    <cylinder radius="${PROP_LENGTH/2}" length="${PROP_THICKNESS}"/>
+                </geometry>
+            </visual>
+        </link>
+
+        <joint name="${name}_prop_joint" type="fixed">
+            <parent link="${name}_arm"/>
+            <child link="${name}_prop"/>
+            <origin xyz="0 ${ARM_MOTOR_LENGTH} 0"/>
+        </joint>
+    </xacro:macro>
+
+    <link name="base_link">
+        <visual>
+            <origin xyz="0 0 ${-BODY_HEIGHT/2}"/>
+            <geometry>
+                <box size="${BODY_LENGTH} ${BODY_WIDTH} ${BODY_HEIGHT}"/>
+            </geometry>
+        </visual>
+    </link>
+
+    <link name="camera">
+        <visual>
+            <origin xyz="0 0 0"/>
+            <geometry>
+                <box size="0.001 0.025 0.025"/>
+            </geometry>
+        </visual>
+    </link>
+
+    <xacro:prop_arm name="front_left"/>
+    <xacro:prop_arm name="front_right"/>
+    <xacro:prop_arm name="back_left"/>
+    <xacro:prop_arm name="back_right"/>
+
+    <joint name="front_left_arm_joint" type="fixed">
+        <parent link="base_link"/>
+        <child link="front_left_arm"/>
+        <origin xyz="${BODY_LENGTH/2} ${BODY_WIDTH/2} 0" rpy="0 0 0"/>
+    </joint>
+
+    <joint name="back_left_arm_joint" type="fixed">
+        <parent link="base_link"/>
+        <child link="back_left_arm"/>
+        <origin xyz="${-BODY_LENGTH/2} ${BODY_WIDTH/2} 0" rpy="0 0 0"/>
+    </joint>
+
+    <joint name="front_right_arm_joint" type="fixed">
+        <parent link="base_link"/>
+        <child link="front_right_arm"/>
+        <origin xyz="${BODY_LENGTH/2} ${-BODY_WIDTH/2} 0" rpy="0 0 ${pi}"/>
+    </joint>
+
+    <joint name="back_right_arm_joint" type="fixed">
+        <parent link="base_link"/>
+        <child link="back_right_arm"/>
+        <origin xyz="${-BODY_LENGTH/2} ${-BODY_WIDTH/2} 0" rpy="0 0 ${pi}"/>
+    </joint>
+
+    <joint name="camera_body_joint" type="fixed">
+        <parent link="base_link"/>
+        <child link="camera"/>
+        <origin xyz="0 0 0" rpy="0 ${pi/2} 0"/>
+    </joint>
+
+    </joint>
+</robot>
+
