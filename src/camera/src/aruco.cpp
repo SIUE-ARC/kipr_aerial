@@ -33,6 +33,30 @@ Aruco::Aruco(int dictionaryId) {
 /*
  * Aruco
  *
+ * Class for detecting Aruco markers and getting Pose Estimation
+ *
+ */
+Aruco::Aruco(int dictionaryId, std::string cameraCalibrationFile) {
+  this->dictionaryId = dictionaryId;
+  // if dictioniary ID < 0 use custom dictionary file
+  this->dictionaryId = dictionaryId;
+  if (dictionaryId < 0) {
+    this->getCustomDictionary();
+  } else {
+    this->dictionary = cv::aruco::getPredefinedDictionary(
+        cv::aruco::PREDEFINED_DICTIONARY_NAME(this->dictionaryId));
+  }
+  this->detectorParams = cv::aruco::DetectorParameters::create();
+  this->detectorParams->doCornerRefinement = true;
+  if (!this->setCameraCalibration(
+          cameraCalibrationFile)) {
+    std::cout << "Could not Open the camera calibration file" << std::endl;
+  }
+}
+
+/*
+ * Aruco
+ *
  * Class Destructor
  *
  */
@@ -155,8 +179,15 @@ std::vector<double> Aruco::getPose(int arucoId, cv::Mat *frame) {
     std::cout << "Could not get the pose, no callibration" << std::endl;
     return rottransvec;
   }
+  cv::Mat img;
 
-  cv::Mat img = this->getFrame();
+  if(!frame)
+  {
+    img = this->getFrame();
+  }else
+  {
+    img = *frame;
+  }
 
   std::vector<int> ids;
   std::vector<std::vector<cv::Point2f>> corners, rejected;

@@ -21,6 +21,7 @@
 class Aruco {
 public:
   Aruco(int dicionaryId);
+  Aruco(int dicionaryId, std::string cameraCalibrationFile);
   ~Aruco();
   bool openCamera();
   bool arucoMarkerInView(int arucoId, cv::Mat *frame = nullptr);
