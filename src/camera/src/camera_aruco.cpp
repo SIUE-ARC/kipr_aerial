@@ -175,8 +175,8 @@ void publishBottomARCamera(const sensor_msgs::ImageConstPtr& msg)
     if (directPose.size() >= 6) {
       std::cout << "Publising Marker " << std::to_string(marker) << std::endl;
       transformStamped.header.stamp = ros::Time::now();
-      transformStamped.header.frame_id = "front_camera";
-      transformStamped.child_frame_id = "front_camera_marker_" + std::to_string(marker);
+      transformStamped.header.frame_id = "bottom_camera";
+      transformStamped.child_frame_id = "bottom_camera_marker_" + std::to_string(marker);
       transformStamped.transform.translation.x = directPose[0];
       transformStamped.transform.translation.y = directPose[1];
       transformStamped.transform.translation.z = directPose[2];
