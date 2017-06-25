@@ -5,12 +5,6 @@
 
 namespace TSL2561
 {
-    /*      Operation bits  */
-    #define     START       0x00
-    #define     STOP        0xFF
-    #define     WR          0x00
-    #define     RD          0x01
-
     /*      Slave Addresses */
     #define     FLOAT       0x39
     #define     GND         0x29
@@ -24,7 +18,6 @@ namespace TSL2561
     #define     THRESH2     0x04
     #define     THRESH3     0x05
     #define     INTERRUPT   0x06
-    #define     CRC         0x08
     #define     ID          0x0A
     #define     DATA0L      0x0C
     #define     DATA0H      0x0D

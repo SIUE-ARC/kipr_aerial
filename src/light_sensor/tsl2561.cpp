@@ -10,9 +10,7 @@ namespace TSL2561
 {
     /*  Constructor
     *   device: file name of I2C device in filesystem.
-    *   slave_addr: the slave address of the sensor (0x39, 0x29, 0x49)
-    *   device: a file handle for the I2C device. Initialize to null
-    *   note - please do not initialize device file handle, use init() instead.
+    *   slave_addr: the slave address of the sensor (TSL2561::FLOAT, TSL2561::GND, TSL2561::VDD)
     */
     LightSensor::LightSensor(std::string device_name, unsigned char slave_addr)
     {
