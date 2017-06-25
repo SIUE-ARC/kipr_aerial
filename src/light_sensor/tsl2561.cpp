@@ -52,11 +52,9 @@ namespace TSL2561
             std::cerr << "Failed to acquire the I2C bus to talk to slave device" << std::endl;
         }
 
-        buffer[0] = CMD | CONTROL;
+        buffer[0] = CMD | SMB_WRD | CONTROL;
         buffer[1] = PWR_UP;
-
-        sumw += write(this->device, buffer, 1);
-        sumw += write(this->device, &buffer[1], 1);
+        sumw += write(this->device, buffer, 2);
         if(sumw < 2)
         {
             std::cerr << "Failed to write to the control register!" << std::endl;
@@ -72,7 +70,7 @@ namespace TSL2561
     */
     unsigned int LightSensor::readADC(unsigned char ch)
     {
-        unsigned char buffer[3];
+        unsigned char buffer[2];
         unsigned char sumw = 0;
         unsigned char sumr = 0;
         unsigned char data[2];
@@ -83,16 +81,24 @@ namespace TSL2561
             exit(1);
         }
 
-        buffer[0] = CMD | CONTROL;
-        buffer[1] = (ch == 0) ? (CMD | DATA0L):(CMD | DATA1L);
-        buffer[2] = (ch == 0) ? (CMD | DATA0H):(CMD | DATA1H);
-        sumw += write(this->device, &buffer[0], 1);
-        sumw += write(this->device, &buffer[1], 1);
+	std::cout << "Filling out buffers..." << std::endl;
+
+        buffer[0] = (ch == 0) ? (CMD | DATA0L):(CMD | DATA1L);
+	buffer[1] = (ch == 0) ? (CMD | DATA0H):(CMD | DATA1H);
+	
+	std::cout << "Writing to low byte reg" << std::endl;	
+        sumw += write(this->device, buffer, 1);
+
+	std::cout << "Reading lower byte" << std::endl;
         sumr += read(this->device, data, 1);
-        sumw += write(this->device, &buffer[2], 1);
+
+	std::cout << "Writing to high byte reg" << std::endl;
+        sumw += write(this->device, &buffer[1], 1);
+
+	std::cout << "Reading upper byte" << std::endl;
         sumr += read(this->device, &data[1], 1);
 
-        if(sumw < 3)
+        if(sumw < 2)
         {
             std::cerr << "Failed to write to an ADC channel register!" << std::endl;
             exit(1);
@@ -100,12 +106,13 @@ namespace TSL2561
 
         if(sumr < 2)
         {
-            std::cerr << "Failed to read from an ADC channel register!" << std::endl;\
+            std::cerr << "Failed to read from an ADC channel register!" << std::endl;
 	    exit(1);
         }
 
         std::cout << "Successfully read from ADC" << ch << "." << std::endl;
-        return (data[1] << 8) | data[0];
+       	unsigned int retval = (data[1] << 8) | data[0];
+	return retval;
     }
 
     /*  Set Timing register
@@ -188,10 +195,10 @@ namespace TSL2561
     */
     void LightSensor::setInterrupt(std::string mode, unsigned char persist, unsigned short threshL, unsigned short threshH)
     {
-        unsigned char buffer[5];
+        unsigned char buffer[10];
 	unsigned char sumw = 0;
 
-        buffer[10] = CMD | TIMING;
+        buffer[10] = CMD | SMB_WRD | TIMING;
 
         std::transform(mode.begin(), mode.end(), mode.begin(), tolower);
         if(mode.compare("disable") == 0)
@@ -222,15 +229,6 @@ namespace TSL2561
         }
 
         buffer[1] |= persist;
-        sumw += write(this->device, buffer, 1);
-        sumw += write(this->device, &buffer[1], 1);
-
-        if(sumw < 2)
-        {
-            std::cerr << "Failed to write to interrupt control register!" << std::endl;
-            exit(1);
-        }
-
         buffer[2] = CMD | THRESH0;
         buffer[3] = threshL & 0xff;
         buffer[4] = CMD | THRESH1;
@@ -239,15 +237,24 @@ namespace TSL2561
         buffer[7] = threshH & 0xff;
         buffer[8] = CMD | THRESH3;
         buffer[9] = (threshH >> 8) & 0xff;
+        sumw += write(this->device, buffer, 10);
+        sumw += write(this->device, &buffer[1], 1);
 
-        sumw += write(this->device, &buffer[2], 1);
+       /* if(sumw < 2)
+        {
+            std::cerr << "Failed to write to interrupt control register!" << std::endl;
+            exit(1);
+        }
+
+
+        sumw += write(this->device, &buffer[2], 8);
         sumw += write(this->device, &buffer[3], 1);
         sumw += write(this->device, &buffer[4], 1);
         sumw += write(this->device, &buffer[5], 1);
         sumw += write(this->device, &buffer[6], 1);
         sumw += write(this->device, &buffer[7], 1);
         sumw += write(this->device, &buffer[8], 1);
-        sumw += write(this->device, &buffer[9], 1);
+        sumw += write(this->device, &buffer[9], 1);*/
 
         if(sumw < 10)
         {
@@ -316,13 +323,14 @@ namespace TSL2561
         std::string rev;
         std::string part;
 
-        buffer = CMD | ID;
+        buffer = CMD | SMB_WRD | ID;
         sumw += write(this->device, &buffer, 1);
         sumr += read(this->device, &data, 1);
 
         if(sumr < 1)
         {
             std::cerr << "Failed to read from ID register" << std::endl;
+			exit(1);
         }
 
         if(sumw < 1)
