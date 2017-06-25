@@ -60,7 +60,7 @@ namespace TSL2561
             std::cerr << "Failed to write to the control register!" << std::endl;
             exit(1);
         }
-	
+
         std::cout << "TSL2561 has powered up!" << std::endl;
     }
 
@@ -81,21 +81,12 @@ namespace TSL2561
             exit(1);
         }
 
-	std::cout << "Filling out buffers..." << std::endl;
 
         buffer[0] = (ch == 0) ? (CMD | DATA0L):(CMD | DATA1L);
-	buffer[1] = (ch == 0) ? (CMD | DATA0H):(CMD | DATA1H);
-	
-	std::cout << "Writing to low byte reg" << std::endl;	
+	    buffer[1] = (ch == 0) ? (CMD | DATA0H):(CMD | DATA1H);
         sumw += write(this->device, buffer, 1);
-
-	std::cout << "Reading lower byte" << std::endl;
         sumr += read(this->device, data, 1);
-
-	std::cout << "Writing to high byte reg" << std::endl;
         sumw += write(this->device, &buffer[1], 1);
-
-	std::cout << "Reading upper byte" << std::endl;
         sumr += read(this->device, &data[1], 1);
 
         if(sumw < 2)
