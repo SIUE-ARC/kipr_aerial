@@ -50,19 +50,19 @@ namespace TSL2561
     class LightSensor
     {
         private:
-            FILE* device;
-            string device_name;
+            int device;
+            std::string device_name;
             unsigned char slave_addr;
         public:
-            LightSensor(string device_name, unsigned char slave_addr = FLOAT);
+            LightSensor(std::string device_name, unsigned char slave_addr = FLOAT);
             ~LightSensor();
             void init();
             unsigned int readADC(unsigned char ch);
             void setTiming(std::string gain, bool manual, std::string integration);
-            void setInterrupt(std:string mode, unsigned char persist, unsigned short threshL, unsigned short threshH)
+            void setInterrupt(std::string mode, unsigned char persist, unsigned short threshL, unsigned short threshH);
             void enableSensor();
             void disableSensor();
             std::string readID();
-    }
+    };
 }
 #endif

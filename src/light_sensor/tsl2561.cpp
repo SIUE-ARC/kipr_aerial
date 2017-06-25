@@ -4,6 +4,7 @@
 #include <linux/i2c-dev.h>
 #include <linux/i2c.h>
 #include <iostream>
+#include <algorithm>
 #include "tsl2561.h"
 
 namespace TSL2561
@@ -14,9 +15,9 @@ namespace TSL2561
     */
     LightSensor::LightSensor(std::string device_name, unsigned char slave_addr)
     {
-        this.device_name = device_name;
-        this.slave_addr = slave_addr;
-        this.device = null;
+        this->device_name = device_name;
+        this->slave_addr = slave_addr;
+	this->device = 0;
     }
 
     /*  Destructor
@@ -24,9 +25,9 @@ namespace TSL2561
     */
     LightSensor::~LightSensor()
     {
-        if(this.device)
+        if(this->device)
         {
-            close(this.device);
+            close(this->device);
         }
     }
 
@@ -36,33 +37,33 @@ namespace TSL2561
     */
     void LightSensor::init()
     {
-        unsigned char byte[2];
+        unsigned char buffer[2];
         unsigned char sumw = 0;
 
-        this.device = open(this.device_name, O_RDWR);
-        if(this.device < 0)
+        this->device = open(this->device_name.c_str(), O_RDWR);
+        if(this->device < 0)
         {
-            cerr << "Failed to open the I2C bus!" << endl;
-            return;
+            std::cerr << "Failed to open the I2C bus!" << std::endl;
+            exit(1);
         }
 
-        if(ioctl(this.device, I2C_SLAVE, this.slave_addr) < 0)
+        if(ioctl(this->device, I2C_SLAVE, this->slave_addr) < 0)
         {
-            cerr << "Failed to acquire the I2C bus to talk to slave device" << endl;
+            std::cerr << "Failed to acquire the I2C bus to talk to slave device" << std::endl;
         }
 
         buffer[0] = CMD | CONTROL;
         buffer[1] = PWR_UP;
 
-        sumw += write(this.device, buffer, 1);
-        sumw += write(this.device, &buffer[1], 1);
+        sumw += write(this->device, buffer, 1);
+        sumw += write(this->device, &buffer[1], 1);
         if(sumw < 2)
         {
-            cerr << "Failed to write to the I2C bus!" << endl;
-            return;
+            std::cerr << "Failed to write to the I2C bus!" << std::endl;
+            exit(1);
         }
 
-        cout << "TSL2561 has powered up!" << endl;
+        std::cout << "TSL2561 has powered up!" << std::endl;
     }
 
     /*  Read an ADC channel
@@ -78,31 +79,31 @@ namespace TSL2561
 
         if(ch > 1 || ch < 0)
         {
-            cerr << "Invalid channel. Select CH0 or CH1" << endl;
-            return;
+            std::cerr << "Invalid channel. Select CH0 or CH1" << std::endl;
+            exit(1);
         }
 
         buffer[0] = CMD | CONTROL;
         buffer[1] = (ch == 0) ? (CMD | DATA0L):(CMD | DATA1L);
         buffer[2] = (ch == 0) ? (CMD | DATA0H):(CMD | DATA1H);
-        sumw += write(this.device, &buffer[0], 1);
-        sumw += write(this.device, &buffer[1], 1);
-        sumr += read(this.device, data, 1);
-        sumw += write(this.device, &buffer[2], 1);
-        sumr += read(this.device, &data[1], 1)
+        sumw += write(this->device, &buffer[0], 1);
+        sumw += write(this->device, &buffer[1], 1);
+        sumr += read(this->device, data, 1);
+        sumw += write(this->device, &buffer[2], 1);
+        sumr += read(this->device, &data[1], 1);
 
         if(sumw < 3)
         {
-            cerr << "Failed to write to the I2C bus!" << endl;
-            return;
+            std::cerr << "Failed to write to the I2C bus!" << std::endl;
+            exit(1);
         }
 
         if(sumr < 2)
         {
-            cerr << "Failed to read from the I2C bus!" << endl;
+            std::cerr << "Failed to read from the I2C bus!" << std::endl;
         }
 
-        cout << "Successfully read from ADC" << ch << "." << endl;
+        std::cout << "Successfully read from ADC" << ch << "." << std::endl;
         return (data[1] << 8) | data[0];
     }
 
@@ -122,7 +123,7 @@ namespace TSL2561
         unsigned char buffer[2];
         unsigned char sumw = 0;
 
-        std::transform(gain.begin(), gain.end(), gain.begin()::tolower);
+        std::transform(gain.begin(), gain.end(), gain.begin(), tolower);
         if(gain.compare("low") == 0)
         {
             buffer[1] &= ~GAIN;
@@ -133,8 +134,8 @@ namespace TSL2561
         }
         else
         {
-            cerr << "Invalid gain setting. Select LOW or HIGH" << endl;
-            return;
+            std::cerr << "Invalid gain setting. Select LOW or HIGH" << std::endl;
+            exit(1);
         }
 
         buffer[0] = CMD | TIMING;
@@ -147,7 +148,7 @@ namespace TSL2561
             buffer[1] &= ~MANUAL;
         }
 
-        std::transform(integration.begin(), integration.end(), integration.begin()::tolower);
+        std::transform(integration.begin(), integration.end(), integration.begin(), tolower);
         if(integration.compare("short") == 0)
         {
             buffer[1] |= INTEG0;
@@ -162,19 +163,19 @@ namespace TSL2561
         }
         else
         {
-            cerr << "Invalid integration time! Use SHORT, MEDIUM, LONG" << endl;
-            return;
+            std::cerr << "Invalid integration time! Use SHORT, MEDIUM, LONG" << std::endl;
+            exit(1);
         }
 
-        sumw += write(this.device, buffer, 1);
-        sumw += write(this.device, &buffer[1], 1);
+        sumw += write(this->device, buffer, 1);
+        sumw += write(this->device, &buffer[1], 1);
         if(sumw < 2)
         {
-            cerr << "Failed to write to I2C bus!" << endl;
-            return;
+            std::cerr << "Failed to write to I2C bus!" << std::endl;
+            exit(1);
         }
 
-        cout << "Wrote to timing register!" << endl;
+        std::cout << "Wrote to timing register!" << std::endl;
     }
 
     /*  Set Interrupt control and threshold registers.
@@ -187,10 +188,11 @@ namespace TSL2561
     void LightSensor::setInterrupt(std::string mode, unsigned char persist, unsigned short threshL, unsigned short threshH)
     {
         unsigned char buffer[5];
+	unsigned char sumw = 0;
 
         buffer[10] = CMD | TIMING;
 
-        std::transform(mode.begin(), mode.end(), mode.begin()::tolower);
+        std::transform(mode.begin(), mode.end(), mode.begin(), tolower);
         if(mode.compare("disable") == 0)
         {
             buffer[1] |= DISABLE;
@@ -209,23 +211,23 @@ namespace TSL2561
         }
         else
         {
-            cerr << "Invalid interrupt mode! Use DIABLE, LEVEL, SMB, TEST" << endl;
+            std::cerr << "Invalid interrupt mode! Use DIABLE, LEVEL, SMB, TEST" << std::endl;
         }
 
         if(!(persist > 0 && persist < 0x0f))
         {
-            cerr << "Invalid persistance setting! Use an integer between 0-15" << endl;
-            return;
+            std::cerr << "Invalid persistance setting! Use an integer between 0-15" << std::endl;
+            exit(1);
         }
 
         buffer[1] |= persist;
-        sumw += write(this.device, buffer, 1);
-        sumw += write(this.device, &buffer[1], 1);
+        sumw += write(this->device, buffer, 1);
+        sumw += write(this->device, &buffer[1], 1);
 
         if(sumw < 2)
         {
-            cerr << "Failed to write to interrupt control register!" << endl;
-            return;
+            std::cerr << "Failed to write to interrupt control register!" << std::endl;
+            exit(1);
         }
 
         buffer[2] = CMD | THRESH0;
@@ -237,28 +239,28 @@ namespace TSL2561
         buffer[8] = CMD | THRESH3;
         buffer[9] = (threshH >> 8) & 0xff;
 
-        sumw += write(this.device, &buffer[2], 1);
-        sumw += write(this.device, &buffer[3], 1);
-        sumw += write(this.device, &buffer[4], 1);
-        sumw += write(this.device, &buffer[5], 1);
-        sumw += write(this.device, &buffer[6], 1);
-        sumw += write(this.device, &buffer[7], 1);
-        sumw += write(this.device, &buffer[8], 1);
-        sumw += write(this.device, &buffer[9], 1);
+        sumw += write(this->device, &buffer[2], 1);
+        sumw += write(this->device, &buffer[3], 1);
+        sumw += write(this->device, &buffer[4], 1);
+        sumw += write(this->device, &buffer[5], 1);
+        sumw += write(this->device, &buffer[6], 1);
+        sumw += write(this->device, &buffer[7], 1);
+        sumw += write(this->device, &buffer[8], 1);
+        sumw += write(this->device, &buffer[9], 1);
 
         if(sumw < 10)
         {
-            cerr << "Failed to write to threshold registers!" << endl;
-            return;
+            std::cerr << "Failed to write to threshold registers!" << std::endl;
+            exit(1);
         }
 
-        cout << "Successfully set the interrupt thresholds and persistance" << endl;
+        std::cout << "Successfully set the interrupt thresholds and persistance" << std::endl;
     }
 
     /*  Enable ADCs
     *   Applies power to the ADCs and begins integration.
     */
-    void LightSensor::enable()
+    void LightSensor::enableSensor()
     {
         unsigned char buffer[2];
         unsigned char sumw = 0;
@@ -266,22 +268,22 @@ namespace TSL2561
         buffer[0] = CMD | CONTROL;
         buffer[1] = PWR_UP;
 
-        sumw += write(this.device, buffer, 1);
-        sumw += write(this.device, &buffer[1], 1);
+        sumw += write(this->device, buffer, 1);
+        sumw += write(this->device, &buffer[1], 1);
 
         if(sumw < 2)
         {
-            cerr << "Failed to write the control register!" << endl;
-            return;
+            std::cerr << "Failed to write the control register!" << std::endl;
+            exit(1);
         }
 
-        cout << "Device power re-enabled" << endl;
+        std::cout << "Device power re-enabled" << std::endl;
     }
 
     /*  Disables ADCs
     *   Stops integration and removes power from the ADCs
     */
-    void LightSensor::disable()
+    void LightSensor::disableSensor()
     {
         unsigned char buffer[2];
         unsigned char sumw = 0;
@@ -289,16 +291,16 @@ namespace TSL2561
         buffer[0] = CMD | CONTROL;
         buffer[1] = PWR_DWN;
 
-        sumw += write(this.device, buffer, 1);
-        sumw += write(this.device, &buffer[1], 1);
+        sumw += write(this->device, buffer, 1);
+        sumw += write(this->device, &buffer[1], 1);
 
         if(sumw < 2)
         {
-            cerr << "Failed to write the control register!" << endl;
-            return;
+            std::cerr << "Failed to write the control register!" << std::endl;
+            exit(1);
         }
 
-        cout << "Device power disabled" << endl;
+        std::cout << "Device power disabled" << std::endl;
     }
 
     /*  Read device ID
@@ -314,18 +316,18 @@ namespace TSL2561
         std::string part;
 
         buffer = CMD | ID;
-        sumw += write(this.device, &buffer, 1);
-        sumr += read(this.device, &data, 1);
+        sumw += write(this->device, &buffer, 1);
+        sumr += read(this->device, &data, 1);
 
         if(sumr < 1)
         {
-            cerr << "Failed to read from ID register" << endl;
+            std::cerr << "Failed to read from ID register" << std::endl;
         }
 
         if(sumw < 1)
         {
-            cerr << "Failed to write the ID register!" << endl;
-            return;
+            std::cerr << "Failed to write the ID register!" << std::endl;
+            exit(1);
         }
 
         if((data & 0xf0) == 0)
@@ -334,11 +336,11 @@ namespace TSL2561
         }
         else if((data & 0xf0) == 1)
         {
-            part = "TLS2561"
+            part = "TLS2561";
         }
 
-        rev = std::to_string(data & 0f);
+        rev = std::to_string(data & 0x0f);
 
-        cout << "Part number: " << part << " rev: " << rev << endl;
+        std::cout << "Part number: " << part << " rev: " << rev << std::endl;
     }
 }
