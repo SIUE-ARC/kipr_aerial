@@ -14,8 +14,12 @@ namespace TSL2561
     *   device: a file handle for the I2C device. Initialize to null
     *   note - please do not initialize device file handle, use init() instead.
     */
-    LightSensor::LightSensor(std::string device_name, unsigned char slave_addr, FILE* device) :
-    this.device_name(device_name), this.slave_addr(slave_addr), this.device(null){}
+    LightSensor::LightSensor(std::string device_name, unsigned char slave_addr)
+    {
+        this.device_name = device_name;
+        this.slave_addr = slave_addr;
+        this.device = null;
+    }
 
     /*  Destructor
     *   Closes file connection.

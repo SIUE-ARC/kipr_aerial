@@ -58,9 +58,10 @@ namespace TSL2561
     {
         private:
             FILE* device;
+            string device_name;
             unsigned char slave_addr;
         public:
-            LightSensor(string device_name, unsigned char slave_addr = FLOAT, FILE* device);
+            LightSensor(string device_name, unsigned char slave_addr = FLOAT);
             ~LightSensor();
             void init();
             unsigned int readADC(unsigned char ch);
