@@ -59,10 +59,10 @@ namespace TSL2561
         sumw += write(this->device, &buffer[1], 1);
         if(sumw < 2)
         {
-            std::cerr << "Failed to write to the I2C bus!" << std::endl;
+            std::cerr << "Failed to write to the control register!" << std::endl;
             exit(1);
         }
-
+	
         std::cout << "TSL2561 has powered up!" << std::endl;
     }
 
@@ -94,13 +94,14 @@ namespace TSL2561
 
         if(sumw < 3)
         {
-            std::cerr << "Failed to write to the I2C bus!" << std::endl;
+            std::cerr << "Failed to write to an ADC channel register!" << std::endl;
             exit(1);
         }
 
         if(sumr < 2)
         {
-            std::cerr << "Failed to read from the I2C bus!" << std::endl;
+            std::cerr << "Failed to read from an ADC channel register!" << std::endl;\
+	    exit(1);
         }
 
         std::cout << "Successfully read from ADC" << ch << "." << std::endl;
@@ -171,7 +172,7 @@ namespace TSL2561
         sumw += write(this->device, &buffer[1], 1);
         if(sumw < 2)
         {
-            std::cerr << "Failed to write to I2C bus!" << std::endl;
+            std::cerr << "Failed to write to timing register!" << std::endl;
             exit(1);
         }
 
