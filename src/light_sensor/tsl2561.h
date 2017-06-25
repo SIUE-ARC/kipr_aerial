@@ -6,46 +6,46 @@
 namespace TSL2561
 {
     /*      Slave Addresses */
-    #define     FLOAT       0x39
-    #define     GND         0x29
-    #define     VDD         0x49
+    const unsigned char     FLOAT       =	0x39;
+    const unsigned char     GND         =	0x29;
+    const unsigned char     VDD         =	0x49;
 
     /*      Register Addresses  */
-    #define     CONTROL     0x00
-    #define     TIMING      0x01
-    #define     THRESH0     0x02
-    #define     THRESH1     0x03
-    #define     THRESH2     0x04
-    #define     THRESH3     0x05
-    #define     INTERRUPT   0x06
-    #define     ID          0x0A
-    #define     DATA0L      0x0C
-    #define     DATA0H      0x0D
-    #define     DATA1L      0x0E
-    #define     DATA1H      0x0F
+    const unsigned char     CONTROL     =	0x00;
+    const unsigned char     TIMING      =	0x01;
+    const unsigned char     THRESH0     =	0x02;
+    const unsigned char     THRESH1     =	0x03;
+    const unsigned char     THRESH2     =	0x04;
+    const unsigned char     THRESH3     =	0x05;
+    const unsigned char     INTERRUPT   =	0x06;
+    const unsigned char     ID          =	0x0A;
+    const unsigned char     DATA0L      =	0x0C;
+    const unsigned char     DATA0H      =	0x0D;
+    const unsigned char     DATA1L      =	0x0E;
+    const unsigned char     DATA1H      =	0x0F;
 
     /*      CMD Reg bits    */
-    #define     CMD         0x80
-    #define     CLR_INT     0x40
-    #define     SMB_WRD     0x20
-    #define     BLK_R_WR    0x10
+    const unsigned char     CMD         =	0x80;
+    const unsigned char     CLR_INT     =	0x40;
+    const unsigned char     SMB_WRD     =	0x20;
+    const unsigned char     BLK_R_WR    =	0x10;
 
     /*      Control Reg bits    */
-    #define     PWR_UP      0x03
-    #define     PWR_DWN     0x00
+    const unsigned char     PWR_UP      =	0x03;
+    const unsigned char     PWR_DWN     =	0x00;
 
     /*      Timing Reg bits     */
-    #define     GAIN        0x10
-    #define     MANUAL      0x08
-    #define     INTEG0      0x00
-    #define     INTEG1      0x01
-    #define     INTEG2      0x02
+    const unsigned char     GAIN        =	0x10;
+    const unsigned char     MANUAL      =	0x08;
+    const unsigned char     INTEG0      =	0x00;
+    const unsigned char     INTEG1      =	0x01;
+    const unsigned char     INTEG2      =	0x02;
 
     /*      Interrupt Control Register  bits    */
-    #define     DISABLE     0x00
-    #define     LEVEL       0x10
-    #define     SMBALRT     0x20
-    #define     TEST        0x30
+    const unsigned char     DISABLE     =	0x00;
+    const unsigned char     LEVEL       =	0x10;
+    const unsigned char     SMBALRT     =	0x20;
+    const unsigned char     TEST        =	0x30;
 
     class LightSensor
     {
