@@ -54,25 +54,69 @@ Ardrone::odometryCallback(const nav_msgs::Odometry::ConstPtr& pos)
 
 Ardrone::takeoff()
 {
-
+  if(!DEBUG)
+  {
+    std_msgs::Emtpy msg;
+    for (size_t i = 0; i < 5; i++) {
+      this.takeoff_pub.publish(msg);
+    }
+    ros::spinOnce();
+  }
 }
 
 Ardrone::land()
 {
-
+  if(!DEBUG)
+  {
+    std_msgs::Emtpy msg;
+    for (size_t i = 0; i < 5; i++) {
+      this.landing_pub.publish(msg);
+    }
+    ros::spinOnce();
+  }
 }
 
 Ardrone::reset()
 {
-
+  if(!DEBUG)
+  {
+    std_msgs::Emtpy msg;
+    for (size_t i = 0; i < 5; i++) {
+      this.reset_pub.publish(msg);
+    }
+    ros::spinOnce();
+  }
 }
 
 Ardrone::goTo(int x, int y, int z)
 {
+  if(!DEBUG)
+  {
+    if(x < this.max_x && y < this.max_y && z < this.max_z)
+    {
+      geometry_msgs::Twist twist;
+      twist.linear.x = x;
+      twist.linear.y = y;
+      twist.linear.z = z;
+      this.move_pub.publish(twist);
+    }else
+    {
+      ros::info("Ignoring go to command");
+    }
+
+  }
 
 }
 
 Ardrone::hover()
 {
-
+  if(!DEBUG)
+  {
+    geometry_msgs::Twist twist;
+    twist.linear.x = 0;
+    twist.linear.y = 0;
+    twist.linear.z = 0;
+    twist.angular.z = 0;
+    this.move_pub.publish(twist);
+  }
 }
