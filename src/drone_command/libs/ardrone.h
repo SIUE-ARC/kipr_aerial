@@ -1,22 +1,20 @@
-#include <ros/ros.h>
-#include <std_msgs/Emtpy.h>
+#include <std_msgs/Empty.h>
 #include <nav_msgs/Odometry.h>
-#include <geomevry_msgs/Twist.h>
+#include <geometry_msgs/Twist.h>
 #include <string>
 
+#include "DroneInterface.h"
 
 #define DEBUG 1
-class Ardrone {
+class Ardrone : public  DroneInterface{
 private:
-  // Core of ROS
-  ros::NodeHandle nh;
   // Subscribers
   ros::Subscriber odometry_sub;
   // ros::Subscriber front_camera_sub; // Not needed if the camera node is running
   // ros::Subscriber bottom_camera_sub; // Not needed if the camera node is running
 
   // Publishers
-  ros::Publisher takoff_pub;
+  ros::Publisher takeoff_pub;
   ros::Publisher landing_pub;
   ros::Publisher reset_pub;
   ros::Publisher move_pub;
@@ -35,7 +33,7 @@ private:
   void initPublisherSubscribers();
 
   // callbacks
-  void odometryCallback(const nav_msgs::Odometry::ConstPtr& pos);
+  void static odometryCallback(const nav_msgs::Odometry::ConstPtr& pos);
 
 public:
   Ardrone (ros::NodeHandle nh);
