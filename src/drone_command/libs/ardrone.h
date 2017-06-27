@@ -72,4 +72,7 @@ void reset();
 // Movement
 void goTo(int x, int y, int z);
 void hover();
+
+// Status
+int getAltitude();
 };

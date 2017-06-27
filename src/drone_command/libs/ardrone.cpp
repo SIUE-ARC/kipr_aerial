@@ -180,3 +180,8 @@ void Ardrone::hover()
                 }
         }
 }
+
+int Ardrone::getAltitude()
+{
+        return this->navdata.altd;
+}

@@ -13,21 +13,21 @@
  *
  */
 Aruco::Aruco(int dictionaryId) {
-  this->dictionaryId = dictionaryId;
-  // if dictioniary ID < 0 use custom dictionary file
-  this->dictionaryId = dictionaryId;
-  if (dictionaryId < 0) {
-    this->getCustomDictionary();
-  } else {
-    this->dictionary = cv::aruco::getPredefinedDictionary(
-        cv::aruco::PREDEFINED_DICTIONARY_NAME(this->dictionaryId));
-  }
-  this->detectorParams = cv::aruco::DetectorParameters::create();
-  this->detectorParams->doCornerRefinement = true;
-  if (!this->setCameraCalibration(
-          "./logitech.yml")) {
-    std::cout << "Could not Open the camera calibration file" << std::endl;
-  }
+        this->dictionaryId = dictionaryId;
+        // if dictioniary ID < 0 use custom dictionary file
+        this->dictionaryId = dictionaryId;
+        if (dictionaryId < 0) {
+                this->getCustomDictionary();
+        } else {
+                this->dictionary = cv::aruco::getPredefinedDictionary(
+                        cv::aruco::PREDEFINED_DICTIONARY_NAME(this->dictionaryId));
+        }
+        this->detectorParams = cv::aruco::DetectorParameters::create();
+        this->detectorParams->doCornerRefinement = true;
+        if (!this->setCameraCalibration(
+                    "./logitech.yml")) {
+                std::cout << "Could not Open the camera calibration file" << std::endl;
+        }
 }
 
 /*
@@ -37,21 +37,21 @@ Aruco::Aruco(int dictionaryId) {
  *
  */
 Aruco::Aruco(int dictionaryId, std::string cameraCalibrationFile) {
-  this->dictionaryId = dictionaryId;
-  // if dictioniary ID < 0 use custom dictionary file
-  this->dictionaryId = dictionaryId;
-  if (dictionaryId < 0) {
-    this->getCustomDictionary();
-  } else {
-    this->dictionary = cv::aruco::getPredefinedDictionary(
-        cv::aruco::PREDEFINED_DICTIONARY_NAME(this->dictionaryId));
-  }
-  this->detectorParams = cv::aruco::DetectorParameters::create();
-  this->detectorParams->doCornerRefinement = true;
-  if (!this->setCameraCalibration(
-          cameraCalibrationFile)) {
-    std::cout << "Could not Open the camera calibration file" << std::endl;
-  }
+        this->dictionaryId = dictionaryId;
+        // if dictioniary ID < 0 use custom dictionary file
+        this->dictionaryId = dictionaryId;
+        if (dictionaryId < 0) {
+                this->getCustomDictionary();
+        } else {
+                this->dictionary = cv::aruco::getPredefinedDictionary(
+                        cv::aruco::PREDEFINED_DICTIONARY_NAME(this->dictionaryId));
+        }
+        this->detectorParams = cv::aruco::DetectorParameters::create();
+        this->detectorParams->doCornerRefinement = true;
+        if (!this->setCameraCalibration(
+                    cameraCalibrationFile)) {
+                std::cout << "Could not Open the camera calibration file" << std::endl;
+        }
 }
 
 /*
@@ -60,7 +60,9 @@ Aruco::Aruco(int dictionaryId, std::string cameraCalibrationFile) {
  * Class Destructor
  *
  */
-Aruco::~Aruco() { this->camera.release(); }
+Aruco::~Aruco() {
+        this->camera.release();
+}
 
 /*
  * Aruco
@@ -69,15 +71,15 @@ Aruco::~Aruco() { this->camera.release(); }
  *
  */
 cv::Mat Aruco::getFrame() {
-  cv::Mat mt;
-  if (!this->camera.isOpened()) {
-    std::cout << "Camera is not opened, returning empty mat" << std::endl;
-    return mt;
-  }
-  this->camera >> mt;
-  // if (this->flipVertical)
-  //   flip(mt, mt, 1);
-  return mt;
+        cv::Mat mt;
+        if (!this->camera.isOpened()) {
+                std::cout << "Camera is not opened, returning empty mat" << std::endl;
+                return mt;
+        }
+        this->camera >> mt;
+        // if (this->flipVertical)
+        //   flip(mt, mt, 1);
+        return mt;
 }
 /*
  * Set Camera Calibration
@@ -86,11 +88,11 @@ cv::Mat Aruco::getFrame() {
  *
  */
 bool Aruco::setCameraCalibration(std::string filename) {
-  std::string fname = this->calibrationFilePath + filename;
-  if (access(fname.c_str(), F_OK) == -1)
-    return false;
-  this->currentCalibrationFile = filename;
-  return this->readCameraCalibration(filename);
+        std::string fname = this->calibrationFilePath + filename;
+        if (access(fname.c_str(), F_OK) == -1)
+                return false;
+        this->currentCalibrationFile = filename;
+        return this->readCameraCalibration(filename);
 }
 
 /*
@@ -100,13 +102,13 @@ bool Aruco::setCameraCalibration(std::string filename) {
  *
  */
 bool Aruco::readCameraCalibration(std::string filename) {
-  cv::FileStorage fs(filename, cv::FileStorage::READ);
-  if (!fs.isOpened())
-    return false;
-  fs["camera_matrix"] >> this->cameraMatrix;
-  fs["distortion_coefficients"] >> this->distortionCoefficients;
-  fs.release();
-  return true;
+        cv::FileStorage fs(filename, cv::FileStorage::READ);
+        if (!fs.isOpened())
+                return false;
+        fs["camera_matrix"] >> this->cameraMatrix;
+        fs["distortion_coefficients"] >> this->distortionCoefficients;
+        fs.release();
+        return true;
 }
 
 /*
@@ -116,15 +118,15 @@ bool Aruco::readCameraCalibration(std::string filename) {
  *
  */
 bool Aruco::setDictionary(int dictionaryId) {
-  if (dictionaryId < 0) {
-    this->dictionaryId = dictionaryId;
-    return getCustomDictionary();
-  } else {
-    this->dictionaryId = dictionaryId;
-    this->dictionary = cv::aruco::getPredefinedDictionary(
-        cv::aruco::PREDEFINED_DICTIONARY_NAME(dictionaryId));
-    return true;
-  }
+        if (dictionaryId < 0) {
+                this->dictionaryId = dictionaryId;
+                return getCustomDictionary();
+        } else {
+                this->dictionaryId = dictionaryId;
+                this->dictionary = cv::aruco::getPredefinedDictionary(
+                        cv::aruco::PREDEFINED_DICTIONARY_NAME(dictionaryId));
+                return true;
+        }
 }
 /*
  * Get Custom Dictionary
@@ -133,17 +135,17 @@ bool Aruco::setDictionary(int dictionaryId) {
  *
  */
 bool Aruco::getCustomDictionary() {
-  int markerSize, maxCorrectionBits;
-  cv::Mat bytesList;
-  cv::FileStorage fs(this->customDictionaryFile, cv::FileStorage::READ);
-  if (!fs.isOpened())
-    return false;
-  fs["MarkerSize"] >> markerSize;
-  fs["MaxCorrectionBits"] >> maxCorrectionBits;
-  fs["BytesList"] >> bytesList;
-  this->dictionary =
-      new cv::aruco::Dictionary(bytesList, markerSize, maxCorrectionBits);
-  return true;
+        int markerSize, maxCorrectionBits;
+        cv::Mat bytesList;
+        cv::FileStorage fs(this->customDictionaryFile, cv::FileStorage::READ);
+        if (!fs.isOpened())
+                return false;
+        fs["MarkerSize"] >> markerSize;
+        fs["MaxCorrectionBits"] >> maxCorrectionBits;
+        fs["BytesList"] >> bytesList;
+        this->dictionary =
+                new cv::aruco::Dictionary(bytesList, markerSize, maxCorrectionBits);
+        return true;
 }
 
 /*
@@ -154,9 +156,9 @@ bool Aruco::getCustomDictionary() {
  *
  */
 bool Aruco::vectorContains(std::vector<int> vec, int val) {
-  if (find(vec.begin(), vec.end(), val) != vec.end())
-    return true;
-  return false;
+        if (find(vec.begin(), vec.end(), val) != vec.end())
+                return true;
+        return false;
 }
 
 /*
@@ -170,56 +172,56 @@ bool Aruco::vectorContains(std::vector<int> vec, int val) {
  *
  */
 std::vector<double> Aruco::getPose(int arucoId, cv::Mat *frame) {
-  std::vector<double> rottransvec;
+        std::vector<double> rottransvec;
 
-  // Camera Calibration Failed...No files?
-  if ((cameraMatrix.empty() || cv::countNonZero(cameraMatrix) < 1) ||
-      (distortionCoefficients.empty() ||
-       cv::countNonZero(distortionCoefficients) < 1)) {
-    std::cout << "Could not get the pose, no callibration" << std::endl;
-    return rottransvec;
-  }
-  cv::Mat img;
+        // Camera Calibration Failed...No files?
+        if ((cameraMatrix.empty() || cv::countNonZero(cameraMatrix) < 1) ||
+            (distortionCoefficients.empty() ||
+             cv::countNonZero(distortionCoefficients) < 1)) {
+                std::cout << "Could not get the pose, no callibration" << std::endl;
+                return rottransvec;
+        }
+        cv::Mat img;
 
-  if(!frame)
-  {
-    img = this->getFrame();
-  }else
-  {
-    img = *frame;
-  }
+        if(!frame)
+        {
+                img = this->getFrame();
+        }else
+        {
+                img = *frame;
+        }
 
-  std::vector<int> ids;
-  std::vector<std::vector<cv::Point2f>> corners, rejected;
-  std::vector<cv::Vec3d> rvecs, tvecs;
+        std::vector<int> ids;
+        std::vector<std::vector<cv::Point2f> > corners, rejected;
+        std::vector<cv::Vec3d> rvecs, tvecs;
 
-  // detect markers and estimate pose
-  cv::aruco::detectMarkers(img, this->dictionary, corners, ids, detectorParams,
-                           rejected);
-  if (ids.size() > 0 && this->vectorContains(ids, arucoId)) {
-    std::cout << "Estimating the pose " << std::endl;
-    cv::aruco::estimatePoseSingleMarkers(corners, this->arucoSquareSize,
-                                         cameraMatrix, distortionCoefficients,
-                                         rvecs, tvecs);
+        // detect markers and estimate pose
+        cv::aruco::detectMarkers(img, this->dictionary, corners, ids, detectorParams,
+                                 rejected);
+        if (ids.size() > 0 && this->vectorContains(ids, arucoId)) {
+                std::cout << "Estimating the pose " << std::endl;
+                cv::aruco::estimatePoseSingleMarkers(corners, this->arucoSquareSize,
+                                                     cameraMatrix, distortionCoefficients,
+                                                     rvecs, tvecs);
 
-    size_t index = find(ids.begin(), ids.end(), arucoId) - ids.begin();
+                size_t index = find(ids.begin(), ids.end(), arucoId) - ids.begin();
 
-    cv::Vec3d translation = tvecs[index];
-    cv::Vec3d rotation = rvecs[index];
+                cv::Vec3d translation = tvecs[index];
+                cv::Vec3d rotation = rvecs[index];
 
-    rottransvec.clear(); // Clear all of the zero
-    for (size_t i = 0; i < translation.rows; i++) {
-      rottransvec.push_back(translation[i]);
-    }
+                rottransvec.clear(); // Clear all of the zero
+                for (size_t i = 0; i < translation.rows; i++) {
+                        rottransvec.push_back(translation[i]);
+                }
 
-    for (size_t i = 0; i < rotation.rows; i++) {
-      rottransvec.push_back(rotation[i]);
-    }
-  }else
-  {
-    std::cout << "Not estimating the pose" << std::endl;
-  }
-  return rottransvec;
+                for (size_t i = 0; i < rotation.rows; i++) {
+                        rottransvec.push_back(rotation[i]);
+                }
+        }else
+        {
+                std::cout << "Not estimating the pose" << std::endl;
+        }
+        return rottransvec;
 }
 
 /*
@@ -232,49 +234,49 @@ std::vector<double> Aruco::getPose(int arucoId, cv::Mat *frame) {
  * returns mat
  *
  */
- cv::Mat Aruco::getPoseAsMat(int arucoId, cv::Mat *frame) {
-   cv::Mat R = cv::Mat(4, 4, CV_64F, 0.0);
+cv::Mat Aruco::getPoseAsMat(int arucoId, cv::Mat *frame) {
+        cv::Mat R = cv::Mat(4, 4, CV_64F, 0.0);
 
-   // Camera Calibration Failed...No files?
-   if ((cameraMatrix.empty() || cv::countNonZero(cameraMatrix) < 1) ||
-       (distortionCoefficients.empty() ||
-        cv::countNonZero(distortionCoefficients) < 1)) {
-     std::cout << "Could not get the pose, no callibration" << std::endl;
-     return R;
-   }
+        // Camera Calibration Failed...No files?
+        if ((cameraMatrix.empty() || cv::countNonZero(cameraMatrix) < 1) ||
+            (distortionCoefficients.empty() ||
+             cv::countNonZero(distortionCoefficients) < 1)) {
+                std::cout << "Could not get the pose, no callibration" << std::endl;
+                return R;
+        }
 
-   cv::Mat img = this->getFrame();
+        cv::Mat img = this->getFrame();
 
-   std::vector<int> ids;
-   std::vector<std::vector<cv::Point2f>> corners, rejected;
-   std::vector<cv::Vec3d> rvecs, tvecs;
+        std::vector<int> ids;
+        std::vector<std::vector<cv::Point2f> > corners, rejected;
+        std::vector<cv::Vec3d> rvecs, tvecs;
 
-   // detect markers and estimate pose
-   cv::aruco::detectMarkers(img, this->dictionary, corners, ids, detectorParams,
-                            rejected);
-   if (ids.size() > 0 && this->vectorContains(ids, arucoId)) {
-     cv::aruco::estimatePoseSingleMarkers(corners, this->arucoSquareSize,
-                                          cameraMatrix, distortionCoefficients,
-                                          rvecs, tvecs);
+        // detect markers and estimate pose
+        cv::aruco::detectMarkers(img, this->dictionary, corners, ids, detectorParams,
+                                 rejected);
+        if (ids.size() > 0 && this->vectorContains(ids, arucoId)) {
+                cv::aruco::estimatePoseSingleMarkers(corners, this->arucoSquareSize,
+                                                     cameraMatrix, distortionCoefficients,
+                                                     rvecs, tvecs);
 
-     size_t index = find(ids.begin(), ids.end(), arucoId) - ids.begin();
+                size_t index = find(ids.begin(), ids.end(), arucoId) - ids.begin();
 
-    //  cv::Vec3d translation = tvecs[index];
-    //  cv::Vec3d rotation = rvecs[index];
-    //  cv::Mat t = cv::Mat(translation);
-    //  cv::Mat r = cv::Mat(rotation);
-    //  cv::Rodrigues(r, R);
-    //  t = -R.t() * t;
-    //  cv::Rodrigues(R, rotation);
-    cv::Rodrigues(rvecs[index], R);
-    cv::Mat transpose = -R.t() * (cv::Mat)tvecs[index];
-    cv::Mat row = cv::Mat(1, 4, CV_64F, 0.0);
-    row.at<double>(0, 3) = 1;
-    cv::hconcat(R, transpose, R);
-    R.push_back(row);
-   }
-   return R;
- }
+                //  cv::Vec3d translation = tvecs[index];
+                //  cv::Vec3d rotation = rvecs[index];
+                //  cv::Mat t = cv::Mat(translation);
+                //  cv::Mat r = cv::Mat(rotation);
+                //  cv::Rodrigues(r, R);
+                //  t = -R.t() * t;
+                //  cv::Rodrigues(R, rotation);
+                cv::Rodrigues(rvecs[index], R);
+                cv::Mat transpose = -R.t() * (cv::Mat)tvecs[index];
+                cv::Mat row = cv::Mat(1, 4, CV_64F, 0.0);
+                row.at<double>(0, 3) = 1;
+                cv::hconcat(R, transpose, R);
+                R.push_back(row);
+        }
+        return R;
+}
 
 /*
  * Markers in View
@@ -283,49 +285,49 @@ std::vector<double> Aruco::getPose(int arucoId, cv::Mat *frame) {
  *
  */
 std::vector<int> Aruco::arucoMarkersInView(cv::Mat *frame) {
-  std::vector<int> ids;
-  std::vector<std::vector<cv::Point2f>> corners, rejected;
-  cv::Mat img;
-  if (frame == nullptr) {
-    // if (!this->m_camDevice->isOpen())
-    if (!this->camera.isOpened())
-      if (!this->openCamera())
+        std::vector<int> ids;
+        std::vector<std::vector<cv::Point2f> > corners, rejected;
+        cv::Mat img;
+        if (frame == nullptr) {
+                // if (!this->m_camDevice->isOpen())
+                if (!this->camera.isOpened())
+                        if (!this->openCamera())
+                                return ids;
+                img = this->getFrame();
+        } else {
+                img = *frame;
+        }
+
+        cv::aruco::detectMarkers(img, this->dictionary, corners, ids, detectorParams,
+                                 rejected);
+
         return ids;
-    img = this->getFrame();
-  } else {
-    img = *frame;
-  }
-
-  cv::aruco::detectMarkers(img, this->dictionary, corners, ids, detectorParams,
-                           rejected);
-
-  return ids;
 }
 
 /*
  * Marker corners in view
  *
  */
-std::vector<std::vector<cv::Point2f>>
+std::vector<std::vector<cv::Point2f> >
 Aruco::arucoMarkerCorners(cv::Mat *frame) {
-  std::vector<int> ids;
-  std::vector<std::vector<cv::Point2f>> corners, rejected;
+        std::vector<int> ids;
+        std::vector<std::vector<cv::Point2f> > corners, rejected;
 
-  cv::Mat img;
-  if (frame == nullptr) {
-    // if (!this->m_camDevice->isOpen())
-    if (!this->camera.isOpened())
-      if (!this->openCamera())
+        cv::Mat img;
+        if (frame == nullptr) {
+                // if (!this->m_camDevice->isOpen())
+                if (!this->camera.isOpened())
+                        if (!this->openCamera())
+                                return corners;
+                img = this->getFrame();
+        } else {
+                img = *frame;
+        }
+
+        cv::aruco::detectMarkers(img, this->dictionary, corners, ids, detectorParams,
+                                 rejected);
+
         return corners;
-    img = this->getFrame();
-  } else {
-    img = *frame;
-  }
-
-  cv::aruco::detectMarkers(img, this->dictionary, corners, ids, detectorParams,
-                           rejected);
-
-  return corners;
 }
 
 /*
@@ -335,23 +337,23 @@ Aruco::arucoMarkerCorners(cv::Mat *frame) {
  *
  */
 bool Aruco::arucoMarkerInView(int arucoId, cv::Mat *frame) {
-  std::vector<int> ids;
-  std::vector<std::vector<cv::Point2f>> corners, rejected;
-  cv::Mat img;
-  if (frame == nullptr) {
-    // if (!this->m_camDevice->isOpen())
-    if (!this->camera.isOpened())
-      if (!this->openCamera())
+        std::vector<int> ids;
+        std::vector<std::vector<cv::Point2f> > corners, rejected;
+        cv::Mat img;
+        if (frame == nullptr) {
+                // if (!this->m_camDevice->isOpen())
+                if (!this->camera.isOpened())
+                        if (!this->openCamera())
+                                return false;
+                img = this->getFrame();
+        } else {
+                img = *frame;
+        }
+        cv::aruco::detectMarkers(img, this->dictionary, corners, ids, detectorParams,
+                                 rejected);
+        if (find(ids.begin(), ids.end(), arucoId) != ids.end())
+                return true;
         return false;
-    img = this->getFrame();
-  } else {
-    img = *frame;
-  }
-  cv::aruco::detectMarkers(img, this->dictionary, corners, ids, detectorParams,
-                           rejected);
-  if (find(ids.begin(), ids.end(), arucoId) != ids.end())
-    return true;
-  return false;
 }
 
 /*
@@ -361,13 +363,13 @@ bool Aruco::arucoMarkerInView(int arucoId, cv::Mat *frame) {
  *
  */
 void Aruco::calculateChessBoardPosition(std::vector<cv::Point3f> &corners) {
-  for (size_t i = 0; i < (size_t)this->chessBoardDimensions.height; i++) {
-    for (size_t j = 0; j < (size_t)this->chessBoardDimensions.width; j++) {
-      // X = j * square size, Y = i * square size, Z = 0.0
-      corners.push_back(cv::Point3f(j * this->chessBoardSquareSize,
-                                    i * this->chessBoardSquareSize, 0.0f));
-    }
-  }
+        for (size_t i = 0; i < (size_t) this->chessBoardDimensions.height; i++) {
+                for (size_t j = 0; j < (size_t) this->chessBoardDimensions.width; j++) {
+                        // X = j * square size, Y = i * square size, Z = 0.0
+                        corners.push_back(cv::Point3f(j * this->chessBoardSquareSize,
+                                                      i * this->chessBoardSquareSize, 0.0f));
+                }
+        }
 }
 
 /*
@@ -377,16 +379,16 @@ void Aruco::calculateChessBoardPosition(std::vector<cv::Point3f> &corners) {
  *
  */
 void Aruco::calculateChessBoardCornersFromImages(
-    std::vector<std::vector<cv::Point2f>> &foundCorners) {
-  for (std::vector<cv::Mat>::iterator iter = this->images.begin();
-       iter != this->images.end(); iter++) {
-    std::vector<cv::Point2f> pointBuf;
-    bool chessBoardFound = findChessboardCorners(
-        *iter, this->chessBoardDimensions, pointBuf, this->chessBoardFlags);
-    if (chessBoardFound) {
-      foundCorners.push_back(pointBuf);
-    }
-  }
+        std::vector<std::vector<cv::Point2f> > &foundCorners) {
+        for (std::vector<cv::Mat>::iterator iter = this->images.begin();
+             iter != this->images.end(); iter++) {
+                std::vector<cv::Point2f> pointBuf;
+                bool chessBoardFound = findChessboardCorners(
+                        *iter, this->chessBoardDimensions, pointBuf, this->chessBoardFlags);
+                if (chessBoardFound) {
+                        foundCorners.push_back(pointBuf);
+                }
+        }
 }
 
 /*
@@ -397,38 +399,38 @@ void Aruco::calculateChessBoardCornersFromImages(
  */
 
 void Aruco::getImagesFromCamera() {
-  cv::Mat frame, drawToFrame, oefficients,
-      cameraMatrix = cv::Mat::eye(3, 3, CV_64F);
-  std::vector<cv::Mat> savedImages;
-  std::vector<std::vector<cv::Point2f>> markerCorners, rejectedCorners;
+        cv::Mat frame, drawToFrame, oefficients,
+                cameraMatrix = cv::Mat::eye(3, 3, CV_64F);
+        std::vector<cv::Mat> savedImages;
+        std::vector<std::vector<cv::Point2f> > markerCorners, rejectedCorners;
 
-  // if (!this->m_camDevice->isOpen())
-  if (!this->camera.isOpened())
-    if (!this->openCamera())
-      return;
-  usleep(5 * 1000000);
-  while (true) {
-    // TODO Setup using LibWallaby Camera
-    // if (!this->inputVideo.read(frame))
-    //   break;
+        // if (!this->m_camDevice->isOpen())
+        if (!this->camera.isOpened())
+                if (!this->openCamera())
+                        return;
+        usleep(5 * 1000000);
+        while (true) {
+                // TODO Setup using LibWallaby Camera
+                // if (!this->inputVideo.read(frame))
+                //   break;
 
-    std::vector<cv::Vec2f> foundPoints;
-    bool found = false;
-    found = findChessboardCorners(frame, this->chessBoardDimensions,
-                                  foundPoints, this->chessBoardFlags);
+                std::vector<cv::Vec2f> foundPoints;
+                bool found = false;
+                found = findChessboardCorners(frame, this->chessBoardDimensions,
+                                              foundPoints, this->chessBoardFlags);
 
-    if (this->images.size() >= this->numImagesForCalibration)
-      return;
-    if (found) {
-      cv::Mat temp;
-      frame.copyTo(temp);
-      this->images.push_back(temp);
-      // TODO Display to User to positon for next Frame...
-      usleep(5 * 1000);
-    } else {
-      // TODO Display to User to reposition camera...
-    }
-  }
+                if (this->images.size() >= this->numImagesForCalibration)
+                        return;
+                if (found) {
+                        cv::Mat temp;
+                        frame.copyTo(temp);
+                        this->images.push_back(temp);
+                        // TODO Display to User to positon for next Frame...
+                        usleep(5 * 1000);
+                } else {
+                        // TODO Display to User to reposition camera...
+                }
+        }
 }
 
 /*
@@ -438,23 +440,23 @@ void Aruco::getImagesFromCamera() {
  *
  */
 bool Aruco::calibrate(std::vector<cv::Mat> images) {
-  this->images = images; // pass in images instead of get them here
-  std::vector<std::vector<cv::Point2f>> imageSpacePoints;
-  this->calculateChessBoardCornersFromImages(imageSpacePoints);
-  std::vector<std::vector<cv::Point3f>> worldCornerPoints(1);
-  this->calculateChessBoardPosition(worldCornerPoints[0]);
-  worldCornerPoints.resize(imageSpacePoints.size(), worldCornerPoints[0]);
+        this->images = images; // pass in images instead of get them here
+        std::vector<std::vector<cv::Point2f> > imageSpacePoints;
+        this->calculateChessBoardCornersFromImages(imageSpacePoints);
+        std::vector<std::vector<cv::Point3f> > worldCornerPoints(1);
+        this->calculateChessBoardPosition(worldCornerPoints[0]);
+        worldCornerPoints.resize(imageSpacePoints.size(), worldCornerPoints[0]);
 
-  std::vector<cv::Mat> rVecs, tVecs;
-  this->distortionCoefficients = cv::Mat::zeros(8, 1, CV_64F);
-  // Performs the Calibration
-  calibrateCamera(worldCornerPoints, imageSpacePoints,
-                  this->chessBoardDimensions, this->cameraMatrix,
-                  this->distortionCoefficients, rVecs, tVecs);
-  if (this->saveCalibration())
-    return true;
-  else
-    return false;
+        std::vector<cv::Mat> rVecs, tVecs;
+        this->distortionCoefficients = cv::Mat::zeros(8, 1, CV_64F);
+        // Performs the Calibration
+        calibrateCamera(worldCornerPoints, imageSpacePoints,
+                        this->chessBoardDimensions, this->cameraMatrix,
+                        this->distortionCoefficients, rVecs, tVecs);
+        if (this->saveCalibration())
+                return true;
+        else
+                return false;
 }
 
 /*
@@ -464,23 +466,23 @@ bool Aruco::calibrate(std::vector<cv::Mat> images) {
  *
  */
 bool Aruco::saveCalibration() {
-  std::string fname = "/cameraCalibration.yml";
+        std::string fname = "/cameraCalibration.yml";
 
-  cv::FileStorage fs(fname, cv::FileStorage::WRITE);
-  if (!fs.isOpened())
-    return false;
-  time_t tm;
-  time(&tm);
-  struct tm *t2 = localtime(&tm);
-  char buf[1024];
-  strftime(buf, sizeof(buf), "%c", t2);
+        cv::FileStorage fs(fname, cv::FileStorage::WRITE);
+        if (!fs.isOpened())
+                return false;
+        time_t tm;
+        time(&tm);
+        struct tm *t2 = localtime(&tm);
+        char buf[1024];
+        strftime(buf, sizeof(buf), "%c", t2);
 
-  fs << "calibration_time" << buf;
-  fs << "camera_matrix" << this->cameraMatrix;
-  fs << "distortion_coefficients" << this->distortionCoefficients;
-  fs.release();
-  this->setCameraCalibration(this->calibrationFilePath);
-  return true;
+        fs << "calibration_time" << buf;
+        fs << "camera_matrix" << this->cameraMatrix;
+        fs << "distortion_coefficients" << this->distortionCoefficients;
+        fs.release();
+        this->setCameraCalibration(this->calibrationFilePath);
+        return true;
 }
 
 /*
@@ -490,11 +492,11 @@ bool Aruco::saveCalibration() {
  *
  */
 void Aruco::setChessBoardSize(float sizeInMeters) {
-  if (sizeInMeters > 0.0 && sizeInMeters < 1.0) {
-    this->chessBoardSquareSize = sizeInMeters;
-  } else {
-    this->chessBoardSquareSize = 0.0235f; // Default size if printed on 8.5x11
-  }
+        if (sizeInMeters > 0.0 && sizeInMeters < 1.0) {
+                this->chessBoardSquareSize = sizeInMeters;
+        } else {
+                this->chessBoardSquareSize = 0.0235f; // Default size if printed on 8.5x11
+        }
 }
 
 /*
@@ -504,11 +506,11 @@ void Aruco::setChessBoardSize(float sizeInMeters) {
  *
  */
 void Aruco::setArucoMarkerSize(float sizeInMeters) {
-  if (sizeInMeters > 0.0 && sizeInMeters < 1.0) {
-    this->arucoSquareSize = sizeInMeters;
-  } else {
-    this->arucoSquareSize = 0.025f; // Default size if printed on 8.5x11
-  }
+        if (sizeInMeters > 0.0 && sizeInMeters < 1.0) {
+                this->arucoSquareSize = sizeInMeters;
+        } else {
+                this->arucoSquareSize = 0.025f; // Default size if printed on 8.5x11
+        }
 }
 
 /*
@@ -518,9 +520,9 @@ void Aruco::setArucoMarkerSize(float sizeInMeters) {
  *
  */
 bool Aruco::openCamera() {
-  std::cout << "Opening Camera" << std::endl;
-  if (this->camera.isOpened())
-    return true;
-  // Camera 1 is the default
-  return this->camera.open(0);
+        std::cout << "Opening Camera" << std::endl;
+        if (this->camera.isOpened())
+                return true;
+        // Camera 1 is the default
+        return this->camera.open(0);
 }
