@@ -16,5 +16,5 @@ public:
   // Land command
   virtual void land() = 0;
   // Go To X, Y, Z Position command
-  virtual void goTo(int x, int y, int z) = 0;
+  virtual void goTo(double x, double y, double z) = 0;
 };

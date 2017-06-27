@@ -36,14 +36,15 @@ Ardrone::~Ardrone()
 
 void Ardrone::initPublisherSubscribers()
 {
-        this->odometry_sub = this->nh.subscribe<nav_msgs::Odometry>("ardrone/odometry", 50, this->odometryCallback);
-        this->legacynav_sub = this->nh.subscribe<ardrone_autonomy::Navdata>("ardrone/navdata", 50, &Ardrone::navdataCallback, this);
-        this->takeoff_pub = this->nh.advertise<std_msgs::Empty>("ardrone/takeoff", 50);
-        this->landing_pub = this->nh.advertise<std_msgs::Empty>("ardrone/landing", 50);
-        this->reset_pub = this->nh.advertise<std_msgs::Empty>("ardrone/reset", 50);
-        this->move_pub = this->nh.advertise<geometry_msgs::Twist>("ardrone/cmd_vel", 50);
+        this->odometry_sub = this->nh.subscribe<nav_msgs::Odometry>("/ardrone/odometry", 10, this->odometryCallback);
+        this->legacynav_sub = this->nh.subscribe<ardrone_autonomy::Navdata>("/ardrone/navdata", 10, &Ardrone::navdataCallback, this);
+        this->takeoff_pub = this->nh.advertise<std_msgs::Empty>("/ardrone/takeoff", 10);
+        this->landing_pub = this->nh.advertise<std_msgs::Empty>("/ardrone/land", 10);
+        this->reset_pub = this->nh.advertise<std_msgs::Empty>("/ardrone/reset", 10);
+        this->move_pub = this->nh.advertise<geometry_msgs::Twist>("cmd_vel", 10);
 
         // this->camera_switcher_service = this->nh.serviceClient<uint8>("ardrone/setcamchannel");
+        ros::Duration(1.0).sleep(); // To let the publishers connect
 }
 
 void Ardrone::odometryCallback(const nav_msgs::Odometry::ConstPtr& pos)
@@ -106,11 +107,13 @@ void Ardrone::takeoff()
         {
                 if(this->state != States::FLYING_1 && this->state != States::FLYING_2 && this->state != States::LANDING)
                 {
+                  std::cout << "Sending takeoff command" << std::endl;
                         // std_msgs::Empty msg;
-                        for (size_t i = 0; i < 5; i++) {
+                        // for (size_t i = 0; i < 5; i++) {
                                 this->takeoff_pub.publish(std_msgs::Empty());
-                        }
-                        ros::spinOnce();
+                                ros::Duration(0.5).sleep();
+                        // }
+                        // ros::spinOnce();
                 }
         }
 }
@@ -119,14 +122,19 @@ void Ardrone::land()
 {
         if(!DEBUG)
         {
-                if(this->state == States::FLYING_1 || this->state == States::FLYING_2)
-                {
                         // std_msgs::Empty msg;
-                        for (size_t i = 0; i < 5; i++) {
-                                this->landing_pub.publish(std_msgs::Empty());
+                        // for (size_t i = 0; i < 5; i++) {
+                        int count = 0;
+                        while(this->state != this->States::LANDING && this->state != this->States::LANDED && count < 3)
+                        {
+                          std::cout << (int) this->state << std::endl;
+                          std::cout << "Sending the Landing Command" << std::endl;
+                          this->landing_pub.publish(std_msgs::Empty());
+                          ros::Duration(0.5).sleep();
+                          count++;
                         }
-                        ros::spinOnce();
-                }
+                        // }
+                        // ros::spinOnce();
         }
 }
 
@@ -138,14 +146,15 @@ void Ardrone::reset()
                 {
                         ROS_DEBUG("RESET WHEN CURRENTLY ACTIVE, CAUTION");
                 }
-                for (size_t i = 0; i < 5; i++) {
+                // for (size_t i = 0; i < 5; i++) {
                         this->reset_pub.publish(std_msgs::Empty());
-                }
+                        ros::Duration(0.5).sleep();
+                // }
                 ros::spinOnce();
         }
 }
 
-void Ardrone::goTo(int x, int y, int z)
+void Ardrone::goTo(double x, double y, double z)
 {
         if(!DEBUG)
         {
@@ -177,6 +186,7 @@ void Ardrone::hover()
                         twist.linear.z = 0;
                         twist.angular.z = 0;
                         this->move_pub.publish(twist);
+                        ros::Duration(0.5).sleep();
                 }
         }
 }

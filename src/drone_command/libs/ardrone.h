@@ -7,7 +7,7 @@
 
 #include "DroneInterface.h"
 
-#define DEBUG 1
+#define DEBUG 0
 class Ardrone : public DroneInterface {
 private:
 // Subscribers
@@ -36,7 +36,7 @@ int max_x, max_y, max_z;
 enum class States {
 UNKNOWN = 0,
 INITED = 1,
-LANDED = 3,
+LANDED = 2,
 FLYING_1 = 3,
 FLYING_2 = 7,
 TEST = 5,
@@ -70,7 +70,7 @@ void land();
 void reset();
 
 // Movement
-void goTo(int x, int y, int z);
+void goTo(double x, double y, double z);
 void hover();
 
 // Status
