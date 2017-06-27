@@ -74,5 +74,5 @@ void goTo(int x, int y, int z);
 void hover();
 
 // Status
-int getAltitude();
+double getAltitude();
 };

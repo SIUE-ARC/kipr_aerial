@@ -33,7 +33,7 @@ int main(int argc, char **argv) {
 
         bool done = false;
         bool bottomCamera = true;
-        int landed_altitude = 0.5; // Meters
+        double landed_altitude = 0.5; // Meters
         ros::Rate rate(50);
         while(nh.ok() && !done)
         {
@@ -41,10 +41,10 @@ int main(int argc, char **argv) {
                 try {
                         if(bottomCamera)
                         {
-                                camera_transform = tfBuffer.lookupTransform("bottom_camera_marker_0", "world", ros::Time(0));
+                                camera_transform = tfBuffer.lookupTransform("bottom_camera_marker_0", "bottom_camera", ros::Time(0));
                         }else
                         {
-                                camera_transform = tfBuffer.lookupTransform("front_camera_marker_0", "world", ros::Time(0));
+                                camera_transform = tfBuffer.lookupTransform("front_camera_marker_0", "front_camera", ros::Time(0));
                         }
                 }catch(tf2::TransformException &ex)
                 {

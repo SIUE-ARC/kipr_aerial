@@ -181,7 +181,7 @@ void Ardrone::hover()
         }
 }
 
-int Ardrone::getAltitude()
+double Ardrone::getAltitude()
 {
-        return this->navdata.altd;
+        return (0.001 * this->navdata.altd);
 }
