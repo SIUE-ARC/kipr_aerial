@@ -41,7 +41,7 @@ void Ardrone::initPublisherSubscribers()
         this->takeoff_pub = this->nh.advertise<std_msgs::Empty>("/ardrone/takeoff", 10);
         this->landing_pub = this->nh.advertise<std_msgs::Empty>("/ardrone/land", 10);
         this->reset_pub = this->nh.advertise<std_msgs::Empty>("/ardrone/reset", 10);
-        this->move_pub = this->nh.advertise<geometry_msgs::Twist>("cmd_vel", 10);
+        this->move_pub = this->nh.advertise<geometry_msgs::Twist>("cmd_vel", 0);
 
         // this->camera_switcher_service = this->nh.serviceClient<uint8>("ardrone/setcamchannel");
         ros::Duration(1.0).sleep(); // To let the publishers connect
@@ -107,13 +107,11 @@ void Ardrone::takeoff()
         {
                 if(this->state != States::FLYING_1 && this->state != States::FLYING_2 && this->state != States::LANDING)
                 {
-                  std::cout << "Sending takeoff command" << std::endl;
-                        // std_msgs::Empty msg;
-                        // for (size_t i = 0; i < 5; i++) {
-                                this->takeoff_pub.publish(std_msgs::Empty());
-                                ros::Duration(0.5).sleep();
-                        // }
-                        // ros::spinOnce();
+                        std::cout << "Sending takeoff command" << std::endl;
+                        this->takeoff_pub.publish(std_msgs::Empty());
+                        ros::Duration(2.0).sleep();
+                        // this->goTo(-0.2, 0.0,0.5);
+// this->hover();
                 }
         }
 }
@@ -122,19 +120,19 @@ void Ardrone::land()
 {
         if(!DEBUG)
         {
-                        // std_msgs::Empty msg;
-                        // for (size_t i = 0; i < 5; i++) {
-                        int count = 0;
-                        while(this->state != this->States::LANDING && this->state != this->States::LANDED && count < 3)
-                        {
-                          std::cout << (int) this->state << std::endl;
-                          std::cout << "Sending the Landing Command" << std::endl;
-                          this->landing_pub.publish(std_msgs::Empty());
-                          ros::Duration(0.5).sleep();
-                          count++;
-                        }
-                        // }
-                        // ros::spinOnce();
+                // std_msgs::Empty msg;
+                // for (size_t i = 0; i < 5; i++) {
+                int count = 0;
+                while(this->state != this->States::LANDING && this->state != this->States::LANDED && count < 3)
+                {
+                        std::cout << (int) this->state << std::endl;
+                        std::cout << "Sending the Landing Command" << std::endl;
+                        this->landing_pub.publish(std_msgs::Empty());
+                        ros::Duration(0.5).sleep();
+                        count++;
+                }
+                // }
+                // ros::spinOnce();
         }
 }
 
@@ -147,8 +145,8 @@ void Ardrone::reset()
                         ROS_DEBUG("RESET WHEN CURRENTLY ACTIVE, CAUTION");
                 }
                 // for (size_t i = 0; i < 5; i++) {
-                        this->reset_pub.publish(std_msgs::Empty());
-                        ros::Duration(0.5).sleep();
+                this->reset_pub.publish(std_msgs::Empty());
+                ros::Duration(0.5).sleep();
                 // }
                 ros::spinOnce();
         }
@@ -158,17 +156,15 @@ void Ardrone::goTo(double x, double y, double z)
 {
         if(!DEBUG)
         {
-                if((this->state == States::FLYING_1 || this->state == States::FLYING_2 ) && x < this->max_x && y < this->max_y && z < this->max_z)
-                {
-                        geometry_msgs::Twist twist;
-                        twist.linear.x = x;
-                        twist.linear.y = y;
-                        twist.linear.z = z;
-                        this->move_pub.publish(twist);
-                }else
-                {
-                        std::cerr << "Ignore GoTo Command" << std::endl;
-                }
+                std::cout << "Go To X: " << x << " Y: " << y << " Z: " << z << std::endl;
+                double duration = (x < 0) ? (-x / this->max_speed) + 0.4 : x / this->max_speed;
+                std::cout << "Flight Duration: " << duration << std::endl;
+                geometry_msgs::Twist twist;
+                twist.linear.x = x;
+                twist.linear.y = y;
+                twist.linear.z = z;
+                this->move_pub.publish(twist);
+                ros::Duration(duration).sleep();
 
         }
 

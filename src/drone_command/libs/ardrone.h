@@ -4,6 +4,7 @@
 #include <geometry_msgs/Twist.h>
 #include <ardrone_autonomy/Navdata.h>
 #include <string>
+#include <stdlib.h> 
 
 #include "DroneInterface.h"
 
@@ -31,6 +32,8 @@ std::string bottom_camera_config_file;
 // Ranges
 int max_altitude, min_altitude;
 int max_x, max_y, max_z;
+
+double max_speed = 5.0; // m/s
 
 // States
 enum class States {
