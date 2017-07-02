@@ -16,6 +16,7 @@
 #include <opencv2/highgui.hpp>
 #include <opencv2/videoio.hpp>
 #include <string>
+#include <cstdlib>
 #include <unistd.h>
 
 class Aruco {
@@ -52,7 +53,7 @@ int chessBoardFlags = cv::CALIB_CB_ADAPTIVE_THRESH |
 std::string currentCalibrationFile = "";
 std::string customDictionaryFile =
         "kipr_dictionary.yml";          // TODO need to get the proper path
-std::string calibrationFilePath = "~/kipr_aerial/";   // TODO neet to get the proper path
+std::string calibrationFilePath = "/kipr_aerial/";   // TODO neet to get the proper path
 cv::Ptr<cv::aruco::Dictionary> dictionary;
 cv::Ptr<cv::aruco::DetectorParameters> detectorParams;
 cv::VideoCapture camera;

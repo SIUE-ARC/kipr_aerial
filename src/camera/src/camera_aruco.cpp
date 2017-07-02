@@ -28,46 +28,16 @@ tf2::Quaternion *convertToQuaternion(double rotx, double roty, double rotz);
 const static std::string ARDRONE_FRONT_CAMERA_FILE = "ardrone_front.yml";
 const static std::string ARDRONE_BOTTOM_CAMERA_FILE = "ardrone_bottom.yml";
 
-void printUsage()
-{
-        std::cout << "Please specify either --direct-camera or --ar-topic" << std::endl;
-}
-
 int main(int argc, char **argv) {
         ros::init(argc, argv, "camera");
-
-        // Check the program parameters
-        std::cout << "argc: " << argc << " opt " << argv[1] << std::endl;
-        if(argc < 2)
-        {
-                std::cout << "Please specify either --direct-camera or --ar-topic" << std::endl;
-                printUsage();
-                exit(-1);
-        }
-
-        std::string opt = argv[1]; // Contains the CMD Line Argument
-        if(opt != "--direct-camera" && opt != "--ar-topic")
-        {
-                std::cout << "Please specify either --direct-camera or --ar-topic" << std::endl;
-                printUsage();
-                exit(-1);
-        }
-
         // Get the Node Handle
         ros::NodeHandle nh;
-
-        if(opt == "--ar-drone")
-        {
-                // Subscribe to both the front camera and bottom camera
-                image_transport::ImageTransport it(nh);
-                image_transport::Subscriber front_sub = it.subscribe("ardrone/front/image_raw", 1, publishFrontARCamera);
-                image_transport::Subscriber bottom_sub = it.subscribe("ardrone/bottom/image_raw", 1, publishBottomARCamera);
-                ros::spin();
-        }else
-        {
-                // Listen to the main camera
-                publishUsbCamera();
-        }
+        // Subscribe to both the front camera and bottom camera
+        std::cout << "Using AR Drone cameras" << std::endl;
+        image_transport::ImageTransport it(nh);
+        image_transport::Subscriber front_sub = it.subscribe("/ardrone/front/image_raw", 0, publishFrontARCamera);
+        image_transport::Subscriber bottom_sub = it.subscribe("/ardrone/bottom/image_raw", 0, publishBottomARCamera);
+        ros::spin();
         ros::Rate loop_rate(10);
 }
 

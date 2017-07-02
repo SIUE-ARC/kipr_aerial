@@ -88,7 +88,8 @@ cv::Mat Aruco::getFrame() {
  *
  */
 bool Aruco::setCameraCalibration(std::string filename) {
-        std::string fname = this->calibrationFilePath + filename;
+        std::string home(getenv("HOME"));
+        std::string fname = home + this->calibrationFilePath + filename;
         if (access(fname.c_str(), F_OK) == -1)
                 return false;
         this->currentCalibrationFile = filename;
