@@ -25,6 +25,9 @@ void publishFrontARCamera(const sensor_msgs::ImageConstPtr& msg);
 void publishBottomARCamera(const sensor_msgs::ImageConstPtr& msg);
 tf2::Quaternion *convertToQuaternion(double rotx, double roty, double rotz);
 
+const static std::string ARDRONE_FRONT_CAMERA_FILE = "ardrone_front.yml";
+const static std::string ARDRONE_BOTTOM_CAMERA_FILE = "ardrone_bottom.yml";
+
 void printUsage()
 {
         std::cout << "Please specify either --direct-camera or --ar-topic" << std::endl;
@@ -125,7 +128,7 @@ void publishFrontARCamera(const sensor_msgs::ImageConstPtr& msg)
         static tf2_ros::TransformBroadcaster br;
         geometry_msgs::TransformStamped transformStamped;
         std::vector<geometry_msgs::TransformStamped> transforms;
-        Aruco *arucoDetector = new Aruco(0, "ar_front_camera.yml");
+        Aruco *arucoDetector = new Aruco(0, ARDRONE_FRONT_CAMERA_FILE);
 
         std::vector<int> markers = arucoDetector->arucoMarkersInView(&frontCameraFrame);
         for (auto &marker : markers) {
@@ -166,7 +169,7 @@ void publishBottomARCamera(const sensor_msgs::ImageConstPtr& msg)
         static tf2_ros::TransformBroadcaster br;
         geometry_msgs::TransformStamped transformStamped;
         std::vector<geometry_msgs::TransformStamped> transforms;
-        Aruco *arucoDetector = new Aruco(0, "ar_bottom_camera.yml");
+        Aruco *arucoDetector = new Aruco(0, ARDRONE_BOTTOM_CAMERA_FILE);
 
         std::vector<int> markers = arucoDetector->arucoMarkersInView(&bottomCameraFrame);
         for (auto &marker : markers) {
